@@ -1,4 +1,4 @@
-package fr.delcey.cinereminday;
+package fr.delcey.cinereminday.sms_scheduler;
 
 import android.Manifest;
 import android.app.job.JobParameters;
@@ -11,6 +11,8 @@ import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
+
+import fr.delcey.cinereminday.CRDUtils;
 
 /**
  * Created by Nino on 01/03/2017.

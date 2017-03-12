@@ -4,14 +4,14 @@
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.SEND_SMS"/>
-    <uses-permission android:name="android.permission.READ_SMS"/>
+    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
-        <activity android:name=".CRDActivity">
+        <activity android:name=".main.CRDMainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -19,22 +19,24 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".cloud_manager.CRDCodesActivity"/>
+
         <service
-            android:name=".CRDSmsJobSchedulerService"
+            android:name=".sms_scheduler.CRDSmsJobSchedulerService"
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE"/>
 
-        <receiver android:name=".CRDSmsReceiver">
+        <receiver android:name=".local_manager.CRDSmsReceiver">
             <intent-filter>
                 <action android:name="android.provider.telephony.SMS_RECEIVED"/>
             </intent-filter>
         </receiver>
 
         <receiver
-            android:name=".CRDAlarmReceiver"/>
+            android:name=".sms_scheduler.CRDAlarmReceiver"/>
 
         <receiver
-            android:name=".CRDBootReceiver">
+            android:name=".sms_scheduler.CRDBootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>

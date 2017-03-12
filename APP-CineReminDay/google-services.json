@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "807106486286-0tn7h0p73mghq606tbv0pau565btsh11.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "fr.delcey.cinereminday",
+            "certificate_hash": "a4d9c71ed7cdf05c073492d6e915622f3526aedb"
+          }
+        },
+        {
           "client_id": "807106486286-2dgcimsv1r97pr028o0v0sr3jcu8co5h.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "807106486286-2dgcimsv1r97pr028o0v0sr3jcu8co5h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2

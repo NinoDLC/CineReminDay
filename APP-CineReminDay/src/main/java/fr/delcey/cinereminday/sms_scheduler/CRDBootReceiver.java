@@ -1,9 +1,11 @@
-package fr.delcey.cinereminday;
+package fr.delcey.cinereminday.sms_scheduler;
 
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
+import fr.delcey.cinereminday.CRDUtils;
 
 /**
  * Created by Nino on 09/03/2017.

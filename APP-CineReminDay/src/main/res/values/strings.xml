@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">CineReminDay</string>
+
+    <string name="main_manage_codes">Manage your Cineday codes</string>
+    <string name="main_sign_in">Sign in to manage your codes</string>
+    <string name="main_schedule_sms">Schedule SMS Job</string>
 </resources>

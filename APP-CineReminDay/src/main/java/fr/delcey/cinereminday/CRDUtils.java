@@ -11,6 +11,9 @@ import android.content.Intent;
 import java.util.Calendar;
 import java.util.regex.Pattern;
 
+import fr.delcey.cinereminday.sms_scheduler.CRDAlarmReceiver;
+import fr.delcey.cinereminday.sms_scheduler.CRDSmsJobSchedulerService;
+
 /**
  * Created by Nino on 09/03/2017.
  */
