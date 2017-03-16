@@ -31,7 +31,7 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.main_activity);
 
         Button buttonScheduleSmsJob = (Button) findViewById(R.id.button_start_job);
         buttonScheduleSmsJob.setOnClickListener(new View.OnClickListener() {
