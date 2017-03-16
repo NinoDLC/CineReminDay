@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "807106486286-qnl4dt6vjcoo9frcbk388at8p2i31276.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "fr.delcey.cinereminday",
+            "certificate_hash": "24548b683d3524f8665bd05c9e1dc97b3d0cc8af"
+          }
+        },
+        {
           "client_id": "807106486286-0tn7h0p73mghq606tbv0pau565btsh11.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

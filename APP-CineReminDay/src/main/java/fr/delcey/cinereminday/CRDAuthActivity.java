@@ -89,11 +89,6 @@ public abstract class CRDAuthActivity extends AppCompatActivity implements Googl
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
                 logInToFirebaseWithGoogleSignIn(account);
-            } else {
-                // Google Sign In failed, update UI appropriately
-                // TODO VOLKO
-
-                Toast.makeText(this, "FUCK GOOGLE", Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -119,14 +114,12 @@ public abstract class CRDAuthActivity extends AppCompatActivity implements Googl
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.v(CRDAuthActivity.class.getName(), "googleSignInAccount.onComplete() called with: " + "isSuccessful = [" + task.isSuccessful() + "]");
+                        Log.v(CRDAuthActivity.class.getName(), "logInToFirebaseWithGoogleSignIn.onComplete() called with: " + "isSuccessful = [" + task.isSuccessful() + "]");
 
                         // TODO VOLKO MAKE USER DE-WAIT
 
                         // If sign in succeeds the auth state listener will be notified and logic to handle the signed in user can be handled in the listener.
                         if (!task.isSuccessful()) {
-                            Log.e(CRDAuthActivity.class.getName(), "googleSignInAccount.onComplete() called with: " + "isSuccessful = [" + task.isSuccessful() + "]");
-
                             onFirebaseConnectionFailed();
                         }
                     }
