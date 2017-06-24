@@ -7,8 +7,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
 
 import fr.delcey.cinereminday.CRDUtils;
+import fr.delcey.cinereminday.local_manager.CRDSharedPreferences;
 
 /**
  * Created by Nino on 10/03/2017.
@@ -19,6 +21,16 @@ public class CRDAlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.v(CRDAlarmReceiver.class.getName(), "onReceive() => Schedule job to send SMS");
+
+        scheduleSmsSending(context);
+    }
+
+    public static void scheduleSmsSending(Context context) {
+        Log.v(CRDAlarmReceiver.class.getName(), "scheduleSmsSending() => Using JobScheduler to send SMS in up to 2 hours...");
+
+        CRDSharedPreferences.getInstance(context).setJobScheduled();
+
         // This broadcast receiver will be awaken on tuesdays, 8:10 AM precisely. Adds some "jitter" to SMS sending and
         // spare some battery drain !
         JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);

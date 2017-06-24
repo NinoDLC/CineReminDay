@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.ConcurrentHashMap;
 
+import fr.delcey.cinereminday.CRDTimeManager;
 import fr.delcey.cinereminday.CRDUtils;
 
 /**
@@ -19,8 +20,11 @@ import fr.delcey.cinereminday.CRDUtils;
 public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String SHARED_PREF_IDENTIFIER = "prefs";
     private static final String SHARED_PREF_KEY_CINEDAY_EPOCH = "CINEDAY_EPOCH";
+    private static final String SHARED_PREF_KEY_ERROR_EPOCH = "ERROR_EPOCH";
+    private static final String SHARED_PREF_KEY_SMS_JOB_SCHEDULED_EPOCH = "SMS_JOB_SCHEDULED_EPOCH";
 
     public static final String SHARED_PREF_KEY_CINEDAY = "CINEDAY";
+    public static final String SHARED_PREF_KEY_ERROR = "ERROR";
     public static final String SHARED_PREF_KEY_SMS_SEND_EPOCH = "SMS_SEND_EPOCH";
 
     // region Singleton
@@ -47,10 +51,10 @@ public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenc
 
     private SharedPreferences mSharedPreferences;
 
-    public void setCinedayCode(String cinedayCode, long epoch) {
+    public void setCinedayCode(String cinedayCode) {
         mSharedPreferences.edit()
                 .putString(SHARED_PREF_KEY_CINEDAY, cinedayCode)
-                .putLong(SHARED_PREF_KEY_CINEDAY_EPOCH, epoch)
+                .putLong(SHARED_PREF_KEY_CINEDAY_EPOCH, CRDTimeManager.getEpoch())
                 .apply();
     }
 
@@ -62,41 +66,71 @@ public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenc
     public boolean isCinedayCodeValid() {
         long codeEpoch = mSharedPreferences.getLong(SHARED_PREF_KEY_CINEDAY_EPOCH, -1);
 
-        // Code is valid only between 0800 and 2359, on tuesday
-        Calendar tuesdayMorning = Calendar.getInstance();
-        tuesdayMorning.setTimeInMillis(System.currentTimeMillis());
-        tuesdayMorning.set(Calendar.DAY_OF_WEEK, Calendar.TUESDAY);
-        tuesdayMorning.set(Calendar.HOUR_OF_DAY, 8);
-
-        long tuesdayMorningEpoch = tuesdayMorning.getTimeInMillis();
-
-        Calendar tuesdayEvening = Calendar.getInstance();
-        tuesdayEvening.setTimeInMillis(System.currentTimeMillis());
-        tuesdayEvening.set(Calendar.DAY_OF_WEEK, Calendar.TUESDAY);
-        tuesdayEvening.set(Calendar.HOUR_OF_DAY, 23);
-        tuesdayEvening.set(Calendar.MINUTE, 59);
-
-        long tuesdayEveningEpoch = tuesdayEvening.getTimeInMillis();
-
-        return CRDUtils.isEpochBetween(codeEpoch, tuesdayMorningEpoch, tuesdayEveningEpoch);
+        return CRDUtils.isEpochBetweenTuesdayMorningAndTuesdayEvening(codeEpoch);
     }
 
-
-    public void setSmsSendingTimestamp(long epoch) {
+    public void setJobScheduled() {
         mSharedPreferences.edit()
-                .putLong(SHARED_PREF_KEY_SMS_SEND_EPOCH, epoch)
+                .putLong(SHARED_PREF_KEY_SMS_JOB_SCHEDULED_EPOCH, CRDTimeManager.getEpoch())
                 .apply();
     }
 
-    public boolean isSmsSent1HourAgo() {
+    public boolean isJobScheduledLessThan1HourAgo() {
+        long jobScheduledEpoch = mSharedPreferences.getLong(SHARED_PREF_KEY_SMS_JOB_SCHEDULED_EPOCH, -1);
+
+        if (jobScheduledEpoch == -1) {
+            return false;
+        }
+
+        // Job scheduler has a timeout of 2 hours
+        Calendar twoHourAgoEpoch = Calendar.getInstance();
+        twoHourAgoEpoch.setTimeInMillis(CRDTimeManager.getEpoch());
+        twoHourAgoEpoch.add(Calendar.HOUR, -2);
+
+        return new Date(jobScheduledEpoch).after(twoHourAgoEpoch.getTime());
+    }
+
+    public void setSmsSendingTimestamp() {
+        mSharedPreferences.edit()
+                .putLong(SHARED_PREF_KEY_SMS_SEND_EPOCH, CRDTimeManager.getEpoch())
+                .apply();
+    }
+
+    public boolean isSmsSentLessThan1HourAgo() {
         long smsSendingEpoch = mSharedPreferences.getLong(SHARED_PREF_KEY_SMS_SEND_EPOCH, -1);
 
-        // SMS answer from Cineday should be immediate but it could take almost an hour
-        Calendar nowEpoch = Calendar.getInstance();
-        nowEpoch.setTimeInMillis(System.currentTimeMillis());
-        nowEpoch.add(Calendar.HOUR, -1);
+        if (smsSendingEpoch == -1) {
+            return false;
+        }
 
-        return new Date(smsSendingEpoch).after(nowEpoch.getTime());
+        // SMS answer from Cineday should be immediate but it could take almost an hour
+        Calendar oneHourAgoEpoch = Calendar.getInstance();
+        oneHourAgoEpoch.setTimeInMillis(CRDTimeManager.getEpoch());
+        oneHourAgoEpoch.add(Calendar.HOUR, -1);
+
+        return new Date(smsSendingEpoch).after(oneHourAgoEpoch.getTime());
+    }
+
+    public void setError(String message) {
+        mSharedPreferences.edit()
+                .putString(SHARED_PREF_KEY_ERROR, message)
+                .putLong(SHARED_PREF_KEY_ERROR_EPOCH, CRDTimeManager.getEpoch())
+                .apply();
+    }
+
+    @Nullable
+    public String getTodayError() {
+        long errorEpoch = mSharedPreferences.getLong(SHARED_PREF_KEY_ERROR_EPOCH, -1);
+
+        if (CRDUtils.isEpochBetweenTuesdayMorningAndTuesdayEvening(errorEpoch)) {
+            return mSharedPreferences.getString(SHARED_PREF_KEY_ERROR, null);
+        }
+
+        return null;
+    }
+
+    public void clear() {
+        mSharedPreferences.edit().clear().apply();
     }
 
     public void addOnSharedPreferenceListener(@NonNull OnSharedPreferenceListener listener, @NonNull String... preferenceKeysToListen) {
@@ -165,7 +199,7 @@ public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenc
             if (preferenceKeysListened != null) {
                 for (String preferenceKey : preferenceKeysListened) {
                     if (preferenceKey.equalsIgnoreCase(key)) {
-                        onSharedPreferenceListener.onSharedPreferenceChanged(key, sharedPreferences.getString(key, null));
+                        onSharedPreferenceListener.onSharedPreferenceChanged(key, sharedPreferences.getAll().get(key));
 
                         break;
                     }
@@ -175,6 +209,6 @@ public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenc
     }
 
     public interface OnSharedPreferenceListener {
-        void onSharedPreferenceChanged(@NonNull String key, @Nullable String value);
+        void onSharedPreferenceChanged(@NonNull String key, @Nullable Object value);
     }
 }
