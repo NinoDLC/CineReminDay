@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">CineReminDay</string>
 
@@ -8,8 +9,8 @@
     <string name="accessibility_permission">Permission</string>
     <string name="accessibility_permission_state">Permission state</string>
     <string name="accessibility_cineday_code">Cineday code</string>
-    <string name="accessibility_share_code">Permission state</string>
-    <string name="accessibility_ask_code">Ask code to community</string>
+    <string name="accessibility_share_code">Share code</string>
+    <string name="accessibility_ask_code">Ask code</string>
 
     <!-- Status cardview -->
     <string name="main_dashboard_status_error_permission_missing">Status : Need permission</string>
@@ -19,9 +20,11 @@
     <string name="main_dashboard_status_waiting_for_orange">Status : Waiting for Orange</string>
     <string name="main_dashboard_status_waiting_for_orange_message">SMS sent, waiting for Orange to grant Cineday code…</string>
     <string name="main_dashboard_status_code_ok">Status : Enjoy your film !</string>
-    <string name="main_dashboard_status_code_ok_message">If you like the app, please rate it on the store ! :)</string>
+    <string name="main_dashboard_status_code_ok_message">If you like the app, please rate it on the store ! ☺</string>
     <string name="main_dashboard_status_unknown_error">Status : Unknown error</string>
     <string name="main_dashboard_status_unknown_error_message">That\'s bad.</string>
+    <string name="main_dashboard_status_retry_button">Retry</string>
+    <string name="main_dashboard_status_visit_store_button">Rate app on Store</string>
 
     <!-- Permission cardview -->
     <string name="main_dashboard_sms_permission">SMS Permission :</string>
@@ -53,5 +56,4 @@
     <string name="minute">minute</string>
     <string name="minutes">minutes</string>
     <string name="and">and</string>
-    <string name="main_dashboard_status_retry_button">Retry</string>
 </resources>

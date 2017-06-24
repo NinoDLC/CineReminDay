@@ -29,9 +29,12 @@ import fr.delcey.cinereminday.CRDUtils;
 import fr.delcey.cinereminday.R;
 import fr.delcey.cinereminday.local_manager.CRDSharedPreferences;
 
+import static java.security.AccessController.getContext;
+
 public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.OnRequestPermissionsResultCallback, CRDSharedPreferences.OnSharedPreferenceListener {
 
     // Status
+    private Button mButtonStatusStore;
     private Button mButtonStatusRetry;
     private ImageView mImageViewStatus;
     private TextView mTextViewStatusTitle;
@@ -66,6 +69,13 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
             @Override
             public void onClick(View v) {
                 onRetryButtonClicked();
+            }
+        });
+        mButtonStatusStore = (Button) findViewById(R.id.main_dashboard_item_status_btn_store);
+        mButtonStatusStore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onVisitStorePageButtonClicked();
             }
         });
         mImageViewStatus = (ImageView) findViewById(R.id.main_dashboard_item_status_iv_status);
@@ -138,6 +148,7 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
 
     public void manageCardviews() {
         mButtonStatusRetry.setVisibility(View.GONE);
+        mButtonStatusStore.setVisibility(View.GONE);
 
         if (!CRDUtils.isSmsPermissionOK(this)) {
             // Status
@@ -163,6 +174,7 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
                 // Status
                 mTextViewStatusTitle.setText(R.string.main_dashboard_status_code_ok);
                 mTextViewStatusMessage.setText(R.string.main_dashboard_status_code_ok_message);
+                mButtonStatusStore.setVisibility(View.VISIBLE);
 
                 // Cineday Code
                 mCardviewCinedayCode.setVisibility(View.VISIBLE);
@@ -209,6 +221,13 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
         CRDSharedPreferences.getInstance(this).clear();
 
         CRDUtils.sendSmsToOrange(this);
+    }
+
+    private void onVisitStorePageButtonClicked() {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        String playStoreLink = String.format(getString(R.string.open_playstore), getApplicationContext().getPackageName());
+        intent.setData(Uri.parse(playStoreLink));
+        startActivity(intent);
     }
 
     private void onAskSmsPermissionButtonClicked() {
