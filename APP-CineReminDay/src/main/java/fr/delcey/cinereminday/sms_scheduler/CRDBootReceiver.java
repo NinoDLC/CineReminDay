@@ -1,6 +1,5 @@
 package fr.delcey.cinereminday.sms_scheduler;
 
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,11 +13,9 @@ import fr.delcey.cinereminday.CRDUtils;
 public class CRDBootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
-            // Device just booted, set alarm !
-            PendingIntent alarmIntent = CRDUtils.getAlarmIntent(context);
-
-            CRDUtils.scheduleWeeklyAlarm(context, alarmIntent);
+        // Alarms won't resist a reboot
+        if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
+            CRDUtils.scheduleWeeklyAlarm(context);
         }
     }
 }

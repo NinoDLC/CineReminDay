@@ -10,9 +10,9 @@ import android.telephony.ServiceState;
 import android.telephony.SmsManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import fr.delcey.cinereminday.CRDUtils;
+import fr.delcey.cinereminday.local_manager.CRDSharedPreferences;
 
 /**
  * Created by Nino on 01/03/2017.
@@ -25,8 +25,6 @@ public class CRDSmsJobSchedulerService extends JobService {
 
     @Override
     public boolean onStartJob(final JobParameters params) {
-        Toast.makeText(getApplicationContext(), "JOB SCHEDULED !", Toast.LENGTH_LONG).show();
-
         mTelephonyManager = (TelephonyManager) getApplicationContext().getSystemService(TELEPHONY_SERVICE);
         mPhoneStateListener = new PhoneStateListener() {
             // Fired when the service state changes or immediately after registration via .listen()
@@ -39,12 +37,7 @@ public class CRDSmsJobSchedulerService extends JobService {
                 stopListeningToCellularNetwork();
 
                 if (serviceState.getState() == ServiceState.STATE_IN_SERVICE) {
-                    if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
-                        SmsManager smsManager = SmsManager.getDefault();
-                        smsManager.sendTextMessage(CRDUtils.ORANGE_CINEDAY_NUMBER, null, CRDUtils.ORANGE_CINEDAY_KEYWORD, null, null);
-                    } else {
-                        // TODO VOLKO Display notification to tell him he should give us the right to send SMS !
-                    }
+                    sendSmsToOrange();
 
                     jobFinished(params, false); // We did the best we could to send the SMS, job is done.
                 } else {
@@ -58,6 +51,19 @@ public class CRDSmsJobSchedulerService extends JobService {
         mTelephonyManager.listen(mPhoneStateListener, PhoneStateListener.LISTEN_SERVICE_STATE);
 
         return true;
+    }
+
+    private void sendSmsToOrange() {
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
+            CRDUtils.toggleSmsReceiver(getApplicationContext(), true);
+
+            SmsManager smsManager = SmsManager.getDefault();
+            smsManager.sendTextMessage(CRDUtils.ORANGE_CINEDAY_NUMBER, null, CRDUtils.ORANGE_CINEDAY_KEYWORD, null, null);
+
+            CRDSharedPreferences.getInstance(getApplicationContext()).setSmsSendingTimestamp(System.currentTimeMillis());
+        } else {
+            // TODO VOLKO Display notification to tell him he should give us the right to send SMS !
+        }
     }
 
     @Override

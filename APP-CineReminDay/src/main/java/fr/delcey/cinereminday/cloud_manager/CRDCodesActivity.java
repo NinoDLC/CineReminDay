@@ -34,7 +34,7 @@ public class CRDCodesActivity extends CRDAuthActivity implements View.OnClickLis
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.cloudmanager_activity);
+        /*setContentView(R.layout.cloudmanager_activity);
 
         mFireDataBaseRef = FirebaseDatabase.getInstance().getReference();
 
@@ -58,7 +58,7 @@ public class CRDCodesActivity extends CRDAuthActivity implements View.OnClickLis
             }
         };
 
-        recyclerView.setAdapter(mAdapter);
+        recyclerView.setAdapter(mAdapter);*/
     }
 
     @Override
@@ -102,7 +102,7 @@ public class CRDCodesActivity extends CRDAuthActivity implements View.OnClickLis
 
         finish();
     }
-
+/*
     // Firebase needs this to be public static
     public static class CinedayCodeHolder extends RecyclerView.ViewHolder {
         private final TextView mTvTimestamp;
@@ -132,5 +132,5 @@ public class CRDCodesActivity extends CRDAuthActivity implements View.OnClickLis
                 mIvAvailable.setImageResource(R.drawable.cloudmanager_ic_code_unavailable);
             }
         }
-    }
+    }*/
 }

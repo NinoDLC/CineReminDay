@@ -1,32 +1,407 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_main"
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:paddingBottom="8dp"
+    android:paddingTop="8dp">
 
-    <Button
-        android:id="@+id/button_start_job"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/ll_dashboard"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/main_schedule_sms"
-        app:layout_constraintBottom_toTopOf="@+id/button_sign_in"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/button_sign_in"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/main_sign_in"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_start_job"
-        tools:layout_constraintRight_creator="1"
-        app:layout_constraintRight_toRightOf="parent"
-        tools:layout_constraintLeft_creator="1"
-        app:layout_constraintLeft_toLeftOf="parent"/>
+        <android.support.v7.widget.CardView
+            android:id="@+id/main_dashboard_item_cv_status"
+            style="@style/CardView.Dark"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp">
 
-</android.support.constraint.ConstraintLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/main_dashboard_item_status_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="8dp"
+                    android:contentDescription="@string/accessibility_status"
+                    android:src="@drawable/ic_event_white_48dp"/>
+
+                <View
+                    android:id="@+id/main_dashboard_item_status_separator"
+                    android:layout_width="1dp"
+                    android:layout_height="0dp"
+                    android:layout_alignBottom="@+id/main_dashboard_item_status_iv"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="8dp"
+                    android:layout_toEndOf="@id/main_dashboard_item_status_iv"
+                    android:background="@color/divider"/>
+
+                <ImageView
+                    android:id="@+id/main_dashboard_item_status_iv_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="8dp"
+                    android:contentDescription="@string/accessibility_schedule_state"
+                    android:src="@drawable/ic_error_outline_white_36dp"/>
+
+                <LinearLayout
+                    android:id="@+id/main_dashboard_item_status_ll_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@id/main_dashboard_item_status_separator"
+                    android:layout_toStartOf="@id/main_dashboard_item_status_iv_status"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/main_dashboard_item_status_tv_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="@string/main_dashboard_status_error"/>
+
+                    <TextView
+                        android:id="@+id/main_dashboard_item_status_tv_message"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginStart="8dp"
+                        android:fontFamily="sans-serif-light"
+                        android:text="@string/main_dashboard_status_error_message_permission_missing"/>
+                </LinearLayout>
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/main_dashboard_item_cv_permission"
+            style="@style/CardView.Dark"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/main_dashboard_item_permission_iv_permission"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="8dp"
+                        android:contentDescription="@string/accessibility_permission"
+                        android:src="@drawable/ic_perm_phone_msg_white_48dp"/>
+
+                    <View
+                        android:id="@+id/main_dashboard_item_permission_separator"
+                        android:layout_width="1dp"
+                        android:layout_height="0dp"
+                        android:layout_alignBottom="@+id/main_dashboard_item_permission_ll_text"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_toEndOf="@id/main_dashboard_item_permission_iv_permission"
+                        android:background="@color/divider"/>
+
+                    <ImageView
+                        android:id="@+id/main_dashboard_item_permission_iv_permission_state"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="8dp"
+                        android:contentDescription="@string/accessibility_permission_state"
+                        android:src="@drawable/ic_error_outline_white_36dp"/>
+
+                    <LinearLayout
+                        android:id="@+id/main_dashboard_item_permission_ll_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@id/main_dashboard_item_permission_separator"
+                        android:layout_toStartOf="@id/main_dashboard_item_permission_iv_permission_state"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="@string/main_dashboard_sms_permission"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:layout_marginStart="8dp"
+                            android:fontFamily="sans-serif-light"
+                            android:text="@string/main_dashboard_sms_permission_message"/>
+                    </LinearLayout>
+                </RelativeLayout>
+
+                <Button
+                    android:id="@+id/main_dashboard_item_permission_btn_grant_permission"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/main_dashboard_sms_permission_button"/>
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/main_dashboard_item_cv_show_code"
+            style="@style/CardView.Dark"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/main_dashboard_item_show_code_iv_code"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="8dp"
+                    android:contentDescription="@string/accessibility_cineday_code"
+                    android:src="@drawable/ic_confirmation_number_white_48dp"/>
+
+                <View
+                    android:id="@+id/main_dashboard_item_show_code_separator"
+                    android:layout_width="1dp"
+                    android:layout_height="0dp"
+                    android:layout_alignBottom="@+id/main_dashboard_item_show_code_ll_text"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_toEndOf="@id/main_dashboard_item_show_code_iv_code"
+                    android:background="@color/divider"/>
+
+                <LinearLayout
+                    android:id="@+id/main_dashboard_item_show_code_ll_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_toEndOf="@id/main_dashboard_item_show_code_separator"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="@string/main_dashboard_cineday_code"/>
+
+                    <TextView
+                        android:id="@+id/main_dashboard_item_show_code_tv_code"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="XXXX XXXX"
+                        android:textColor="@color/primary"
+                        android:textSize="50sp"
+                        android:textStyle="bold"
+                        tools:ignore="HardcodedText"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginStart="8dp"
+                        android:fontFamily="sans-serif-light"
+                        android:text="@string/main_dashboard_cineday_code_note"/>
+                </LinearLayout>
+            </RelativeLayout>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/main_dashboard_item_cv_share"
+            style="@style/CardView.Dark"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/main_dashboard_item_share_iv_share"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="8dp"
+                        android:contentDescription="@string/accessibility_share_code"
+                        android:src="@drawable/ic_group_work_white_48dp"/>
+
+                    <View
+                        android:id="@+id/main_dashboard_item_share_separator"
+                        android:layout_width="1dp"
+                        android:layout_height="0dp"
+                        android:layout_alignBottom="@+id/main_dashboard_item_share_ll_text"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_toEndOf="@id/main_dashboard_item_share_iv_share"
+                        android:background="@color/divider"/>
+
+                    <LinearLayout
+                        android:id="@+id/main_dashboard_item_share_ll_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@id/main_dashboard_item_share_separator"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="@string/main_dashboard_share_cineday_code"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:layout_marginStart="8dp"
+                            android:fontFamily="sans-serif-light"
+                            android:text="@string/main_dashboard_share_cineday_code_message"/>
+                    </LinearLayout>
+                </RelativeLayout>
+
+                <Button
+                    android:id="@+id/main_dashboard_item_share_btn_share_code_community"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/main_dashboard_share_cineday_code_button_community"/>
+
+                <Button
+                    android:id="@+id/main_dashboard_item_share_btn_share_code_friend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/main_dashboard_share_cineday_code_button_friend"
+                    android:theme="@style/PrimaryFlatButton"/>
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/main_dashboard_item_cv_ask_code"
+            style="@style/CardView.Dark"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/main_dashboard_item_ask_code_iv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="8dp"
+                        android:contentDescription="@string/accessibility_ask_code"
+                        android:src="@drawable/ic_group_white_48dp"/>
+
+                    <View
+                        android:id="@+id/main_dashboard_item_ask_code_separator"
+                        android:layout_width="1dp"
+                        android:layout_height="0dp"
+                        android:layout_alignBottom="@+id/main_dashboard_item_ask_code_ll_text"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_toEndOf="@id/main_dashboard_item_ask_code_iv"
+                        android:background="@color/divider"/>
+
+                    <LinearLayout
+                        android:id="@+id/main_dashboard_item_ask_code_ll_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@id/main_dashboard_item_ask_code_separator"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="@string/main_dashboard_ask_code_cineday_code"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:layout_marginStart="8dp"
+                            android:fontFamily="sans-serif-light"
+                            android:text="@string/main_dashboard_ask_code_cineday_code_message"/>
+                    </LinearLayout>
+                </RelativeLayout>
+
+                <Button
+                    android:id="@+id/main_dashboard_item_ask_code_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/main_dashboard_ask_code_button"/>
+            </LinearLayout>
+        </android.support.v7.widget.CardView>
+    </LinearLayout>
+</ScrollView>
