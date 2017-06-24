@@ -11,26 +11,28 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import fr.delcey.cinereminday.BuildConfig;
 import fr.delcey.cinereminday.CRDAuthActivity;
 import fr.delcey.cinereminday.CRDConstants;
+import fr.delcey.cinereminday.CRDDebug;
 import fr.delcey.cinereminday.CRDUtils;
 import fr.delcey.cinereminday.R;
 import fr.delcey.cinereminday.local_manager.CRDSharedPreferences;
 
-import static fr.delcey.cinereminday.local_manager.CRDSharedPreferences.SHARED_PREF_KEY_CINEDAY;
-import static fr.delcey.cinereminday.local_manager.CRDSharedPreferences.SHARED_PREF_KEY_SMS_SEND_EPOCH;
-
 public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.OnRequestPermissionsResultCallback, CRDSharedPreferences.OnSharedPreferenceListener {
 
     // Status
+    private Button mButtonStatusRetry;
     private ImageView mImageViewStatus;
     private TextView mTextViewStatusTitle;
     private TextView mTextViewStatusMessage;
@@ -50,6 +52,7 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
 
     // Broadcast receiver about time
     private BroadcastReceiver mTimeTickingBroadcastReceiver;
+    private BroadcastReceiver mTimeChangedBroadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +61,13 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
         setContentView(R.layout.main_activity);
 
         // Status
+        mButtonStatusRetry = (Button) findViewById(R.id.main_dashboard_item_status_btn_retry);
+        mButtonStatusRetry.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onRetryButtonClicked();
+            }
+        });
         mImageViewStatus = (ImageView) findViewById(R.id.main_dashboard_item_status_iv_status);
         mTextViewStatusTitle = (TextView) findViewById(R.id.main_dashboard_item_status_tv_title);
         mTextViewStatusMessage = (TextView) findViewById(R.id.main_dashboard_item_status_tv_message);
@@ -104,13 +114,36 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
         });
     }
 
-    private void manageCardviews() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED
-                || ContextCompat.checkSelfPermission(this, Manifest.permission.RECEIVE_SMS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (BuildConfig.DEBUG) {
+            MenuInflater inflater = getMenuInflater();
+            inflater.inflate(R.menu.main_menu, menu);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.main_menu_show_debug:
+                CRDDebug.addDebugMenu(this);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void manageCardviews() {
+        mButtonStatusRetry.setVisibility(View.GONE);
+
+        if (!CRDUtils.isSmsPermissionOK(this)) {
             // Status
             mImageViewStatus.setImageResource(R.drawable.ic_error_outline_white_36dp);
-            //mTextViewStatusTitle.setText(R.string.main_dashboard_status_error);
-            //mTextViewStatusMessage.setText(R.string.main_dashboard_status_error_message_permission_missing);
+            mTextViewStatusTitle.setText(R.string.main_dashboard_status_error_permission_missing);
+            mTextViewStatusMessage.setText(R.string.main_dashboard_status_error_permission_missing_message);
 
             // Permission
             mCardviewSmsPermission.setVisibility(View.VISIBLE);
@@ -144,20 +177,25 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
                 // Share code
                 mCardviewShareCinedayCode.setVisibility(View.GONE);
 
-                if (CRDSharedPreferences.getInstance(this).isSmsSent1HourAgo()) {
+                String error = CRDSharedPreferences.getInstance(this).getTodayError();
+
+                if (error != null && CRDUtils.isTodayTuesday()) {
+                    mButtonStatusRetry.setVisibility(View.VISIBLE);
+                    mImageViewStatus.setImageResource(R.drawable.ic_error_outline_white_36dp);
+                    mTextViewStatusTitle.setText(R.string.main_dashboard_status_unknown_error);
+                    mTextViewStatusMessage.setText(error);
+                } else if (CRDSharedPreferences.getInstance(this).isSmsSentLessThan1HourAgo()) {
                     // Status
                     mTextViewStatusTitle.setText(R.string.main_dashboard_status_waiting_for_orange);
                     mTextViewStatusMessage.setText(R.string.main_dashboard_status_waiting_for_orange_message);
                 } else {
                     // Status
-                    String howMuchTimeUntilSmsSending = CRDUtils.howMuchTimeUntilCineday(this);
+                    String howMuchTimeUntilSmsSending = CRDUtils.secondsToHumanReadableCountDown(this, (int) (CRDUtils.getMillisUntilNextTuesdayMorning() / 1_000));
 
                     mTextViewStatusTitle.setText(R.string.main_dashboard_status_scheduled);
                     mTextViewStatusMessage.setText(getString(R.string.main_dashboard_status_scheduled_message, howMuchTimeUntilSmsSending));
                 }
             }
-
-            CRDUtils.scheduleWeeklyAlarm(this);
         }
 
         if (CRDUtils.isTodayTuesday()) {
@@ -165,6 +203,12 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
         } else {
             mCardviewAskCinedayCode.setVisibility(View.GONE);
         }
+    }
+
+    private void onRetryButtonClicked() {
+        CRDSharedPreferences.getInstance(this).clear();
+
+        CRDUtils.sendSmsToOrange(this);
     }
 
     private void onAskSmsPermissionButtonClicked() {
@@ -201,14 +245,30 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
             }
         };
 
+        mTimeChangedBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent.getAction().equals(Intent.ACTION_TIME_CHANGED)) {
+                    manageCardviews();
+                    CRDUtils.scheduleWeeklyAlarm(CRDMainActivity.this);
+                }
+            }
+        };
+
         registerReceiver(mTimeTickingBroadcastReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
+        registerReceiver(mTimeChangedBroadcastReceiver, new IntentFilter(Intent.ACTION_TIME_CHANGED));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        CRDSharedPreferences.getInstance(this).addOnSharedPreferenceListener(this, SHARED_PREF_KEY_CINEDAY, SHARED_PREF_KEY_SMS_SEND_EPOCH);
+        CRDSharedPreferences.getInstance(this).addOnSharedPreferenceListener(this,
+                CRDSharedPreferences.SHARED_PREF_KEY_CINEDAY,
+                CRDSharedPreferences.SHARED_PREF_KEY_SMS_SEND_EPOCH,
+                CRDSharedPreferences.SHARED_PREF_KEY_ERROR);
+
+        CRDUtils.scheduleWeeklyAlarm(this);
 
         manageCardviews();
     }
@@ -227,6 +287,10 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
         if (mTimeTickingBroadcastReceiver != null) {
             unregisterReceiver(mTimeTickingBroadcastReceiver);
         }
+
+        if (mTimeChangedBroadcastReceiver != null) {
+            unregisterReceiver(mTimeChangedBroadcastReceiver);
+        }
     }
 
     /**
@@ -239,9 +303,7 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
         if (requestCode == CRDConstants.REQUEST_CODE_SMS_PERMISSIONS) {
             for (int i = 0; i < permissions.length; i++) {
                 if (Manifest.permission.SEND_SMS.equalsIgnoreCase(permissions[i])) {
-                    if (PackageManager.PERMISSION_GRANTED == grantResults[i]) {
-                        CRDUtils.scheduleWeeklyAlarm(this);
-                    } else {
+                    if (PackageManager.PERMISSION_GRANTED != grantResults[i]) {
                         // TODO VOLKO Talk better / nicer / prettier to user !
                         Toast.makeText(CRDMainActivity.this, "I can't send SMS, I won't work correctly !", Toast.LENGTH_LONG).show();
                     }
@@ -256,7 +318,7 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
     }
 
     @Override
-    public void onSharedPreferenceChanged(@NonNull String key, @Nullable String value) {
+    public void onSharedPreferenceChanged(@NonNull String key, @Nullable Object value) {
         // TODO VOLKO WHY NOT A NICE LITTLE ANIMATION FOR CODE ? OR EVEN SMS SENDING ^.^
         manageCardviews();
     }

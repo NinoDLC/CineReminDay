@@ -14,7 +14,6 @@
         <activity android:name=".main.CRDMainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
@@ -28,7 +27,7 @@
 
         <receiver android:name=".local_manager.CRDSmsReceiver">
             <intent-filter>
-                <action android:name="android.provider.telephony.SMS_RECEIVED"/>
+                <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
             </intent-filter>
         </receiver>
 
@@ -42,5 +41,4 @@
             </intent-filter>
         </receiver>
     </application>
-
 </manifest>

@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import fr.delcey.cinereminday.CRDTimeManager;
 import fr.delcey.cinereminday.CRDUtils;
 
 /**
@@ -21,28 +22,39 @@ public class CRDSmsReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        StringBuilder smsBuilder = new StringBuilder(140);
+        boolean fromOrange = false;
+
         for (SmsMessage smsMessage : Telephony.Sms.Intents.getMessagesFromIntent(intent)) {
             if (smsMessage != null) {
                 String sender = smsMessage.getDisplayOriginatingAddress();
 
                 if (CRDUtils.ORANGE_CINEDAY_NUMBER.equalsIgnoreCase(sender)) {
-                    String message = smsMessage.getDisplayMessageBody();
-
-                    Matcher matcher = CINEDAY_CODE_PATTERN.matcher(message);
-                    if (matcher.matches()) {
-                        String cinedayCode = matcher.group();
-
-                        // We save it in local
-                        CRDSharedPreferences.getInstance(context).setCinedayCode(cinedayCode, Calendar.getInstance().getTime().getTime());
-
-                        // Don't spy on our beloved users !
-                        CRDUtils.toggleSmsReceiver(context, false);
-                    }
-
-                    // TODO VOLKO IF MESSAGE ERROR, WHAT DO ?
+                    fromOrange = true;
+                    smsBuilder.append(smsMessage.getDisplayMessageBody());
                 } else {
                     break;
                 }
+            }
+        }
+
+        if (fromOrange) {
+            Matcher matcher = CINEDAY_CODE_PATTERN.matcher(smsBuilder.toString());
+
+            if (matcher.matches()) {
+                CRDSharedPreferences.getInstance(context).clear();
+
+                String cinedayCode = matcher.group();
+
+                // We save it in local
+                CRDSharedPreferences.getInstance(context).setCinedayCode(cinedayCode);
+
+                // Don't spy on our beloved users !
+                CRDUtils.toggleSmsReceiver(context, false);
+
+                CRDUtils.scheduleWeeklyAlarm(context);
+            } else {
+                CRDSharedPreferences.getInstance(context).setError(smsBuilder.toString());
             }
         }
     }

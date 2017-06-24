@@ -1,44 +1,77 @@
 package fr.delcey.cinereminday.sms_scheduler;
 
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
+import android.telephony.PhoneStateListener;
+import android.telephony.ServiceState;
+import android.telephony.TelephonyManager;
+import android.util.Log;
 
 import fr.delcey.cinereminday.CRDUtils;
+import fr.delcey.cinereminday.local_manager.CRDSharedPreferences;
+
+import static android.content.Context.TELEPHONY_SERVICE;
 
 /**
  * Created by Nino on 10/03/2017.
  */
 
 public class CRDAlarmReceiver extends BroadcastReceiver {
-    private static final int TWO_HOURS = 2 * 60 * 60 * 1_000; // 2 hours in ms
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        // This broadcast receiver will be awaken on tuesdays, 8:10 AM precisely. Adds some "jitter" to SMS sending and
-        // spare some battery drain !
-        JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
-
-        // ID = 0 because our job is unique !
-        JobInfo.Builder builder = new JobInfo.Builder(0, new ComponentName(context.getPackageName(), CRDSmsJobSchedulerService.class.getName()))
-                .setPersisted(true) // Resists reboots
-                .setOverrideDeadline(TWO_HOURS) // Fires anyway 2 hours later :  SMS should be sent before 10:30 AM, whatever conditions are
-                .setRequiresCharging(true);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_NOT_ROAMING); // SMS sending in roaming may cost some money
-        } else {
-            builder.setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY);
-        }
-
-        jobScheduler.schedule(builder.build());
+        sendSms(context);
 
         // Schedule the next week's alarm !
         // We can't use setRepeating because it won't wake up doze on API 19+
         CRDUtils.scheduleWeeklyAlarm(context);
+    }
+
+    public static void sendSms(final Context context) {
+        Log.v(CRDAlarmReceiver.class.getName(), "sendSms() => Sending SMS...");
+
+        CRDSharedPreferences.getInstance(context).setSmsSendingTimestamp();
+
+        final TelephonyManager telephonyManager = (TelephonyManager) context.getApplicationContext().getSystemService(TELEPHONY_SERVICE);
+        final PhoneStateListener phoneStateListener = new PhoneStateListener() {
+            // Fired when the service state changes or immediately after registration via .listen()
+            @Override
+            public void onServiceStateChanged(ServiceState serviceState) {
+                super.onServiceStateChanged(serviceState);
+
+                String serviceStateDebug;
+
+                switch (serviceState.getState()) {
+                    case ServiceState.STATE_IN_SERVICE:
+                        serviceStateDebug = "STATE_IN_SERVICE";
+                        break;
+                    case ServiceState.STATE_OUT_OF_SERVICE:
+                        serviceStateDebug = "OUT_OF_SERVICE";
+                        break;
+                    case ServiceState.STATE_EMERGENCY_ONLY :
+                        serviceStateDebug = "EMERGENCY_ONLY";
+                        break;
+                    case ServiceState.STATE_POWER_OFF:
+                        serviceStateDebug = "POWER_OFF";
+                        break;
+                    default:
+                        serviceStateDebug = "OTHER";
+                        break;
+                }
+
+                Log.v(CRDAlarmReceiver.class.getName(), "onServiceStateChanged() => " + "serviceState = [" + serviceStateDebug +"]");
+
+                if (serviceState.getState() == ServiceState.STATE_IN_SERVICE) {
+                    CRDUtils.sendSmsToOrange(context);
+
+                    telephonyManager.listen(this, PhoneStateListener.LISTEN_NONE);
+                }
+            }
+        };
+
+        // We can't simply have the current state of the network. We have to register to its changes, then it will fire
+        // immediately after the registration an event with the initial state. Super retarded imo.
+        telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_SERVICE_STATE);
     }
 }

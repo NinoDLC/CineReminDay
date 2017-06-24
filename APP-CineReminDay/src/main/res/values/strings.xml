@@ -12,10 +12,10 @@
     <string name="accessibility_ask_code">Ask code to community</string>
 
     <!-- Status cardview -->
-    <string name="main_dashboard_status_error">Status : Need permission</string>
-    <string name="main_dashboard_status_error_message_permission_missing">Need SMS sending permission.</string>
+    <string name="main_dashboard_status_error_permission_missing">Status : Need permission</string>
+    <string name="main_dashboard_status_error_permission_missing_message">Need SMS sending permission.</string>
     <string name="main_dashboard_status_scheduled">Status : Scheduled</string>
-    <string name="main_dashboard_status_scheduled_message">All set, code will be retrieved %s.</string>
+    <string name="main_dashboard_status_scheduled_message">All set, code will be retrieved in %s.</string>
     <string name="main_dashboard_status_waiting_for_orange">Status : Waiting for Orange</string>
     <string name="main_dashboard_status_waiting_for_orange_message">SMS sent, waiting for Orange to grant Cineday code…</string>
     <string name="main_dashboard_status_code_ok">Status : Enjoy your film !</string>
@@ -37,14 +37,15 @@
     <string name="main_dashboard_share_cineday_code_message">You won\'t go to the cinema tonight ? Make someone happy and share your code this week. Free karma for you !</string>
     <string name="main_dashboard_share_cineday_code_button_community">Share with community</string>
     <string name="main_dashboard_share_cineday_code_button_friend">Share with a friend</string>
-    <string name="sms_default_message">Hey ! Do you want to go to the cinema with your friend today ? Here\'s my code : "%s" use it for free ! Credit/App : CineReminDay</string>
+    <string name="sms_default_message">Hey ! Do you want to go to the cinema with your friend today ? Here\'s my code : %s, use it for free ! Credit/App : CineReminDay</string>
 
     <!-- Cineday ask code to community cardview -->
     <string name="main_dashboard_ask_code_cineday_code">Need a code for today ?</string>
     <string name="main_dashboard_ask_code_cineday_code_message">Ask the community to share one of their code with you !</string>
     <string name="main_dashboard_ask_code_button">Ask code</string>
 
-    <string name="now">now !!</string>
+    <!-- Time convert -->
+    <string name="less_than_a_minute">less than a minute</string>
     <string name="hour">hour</string>
     <string name="hours">hours</string>
     <string name="day">day</string>
@@ -52,4 +53,5 @@
     <string name="minute">minute</string>
     <string name="minutes">minutes</string>
     <string name="and">and</string>
+    <string name="main_dashboard_status_retry_button">Retry</string>
 </resources>
