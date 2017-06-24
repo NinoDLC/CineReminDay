@@ -1,10 +1,8 @@
 package fr.delcey.cinereminday.local_manager;
 
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.provider.Telephony;
 import android.telephony.SmsMessage;
 

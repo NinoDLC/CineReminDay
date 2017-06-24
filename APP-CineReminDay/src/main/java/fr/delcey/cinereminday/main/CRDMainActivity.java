@@ -204,7 +204,6 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
         registerReceiver(mTimeTickingBroadcastReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
