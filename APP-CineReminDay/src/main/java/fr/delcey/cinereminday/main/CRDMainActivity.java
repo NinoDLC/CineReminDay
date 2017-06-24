@@ -177,25 +177,23 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
                 // Share code
                 mCardviewShareCinedayCode.setVisibility(View.GONE);
 
-                if (CRDSharedPreferences.getInstance(this).isSmsSentLessThan1HourAgo()) {
+                String error = CRDSharedPreferences.getInstance(this).getTodayError();
+
+                if (error != null && CRDUtils.isTodayTuesday()) {
+                    mButtonStatusRetry.setVisibility(View.VISIBLE);
+                    mImageViewStatus.setImageResource(R.drawable.ic_error_outline_white_36dp);
+                    mTextViewStatusTitle.setText(R.string.main_dashboard_status_unknown_error);
+                    mTextViewStatusMessage.setText(error);
+                } else if (CRDSharedPreferences.getInstance(this).isSmsSentLessThan1HourAgo()) {
                     // Status
                     mTextViewStatusTitle.setText(R.string.main_dashboard_status_waiting_for_orange);
                     mTextViewStatusMessage.setText(R.string.main_dashboard_status_waiting_for_orange_message);
                 } else {
-                    String error = CRDSharedPreferences.getInstance(this).getTodayError();
+                    // Status
+                    String howMuchTimeUntilSmsSending = CRDUtils.secondsToHumanReadableCountDown(this, (int) (CRDUtils.getMillisUntilNextTuesdayMorning() / 1_000));
 
-                    if (error != null && CRDUtils.isTodayTuesday()) {
-                        mButtonStatusRetry.setVisibility(View.VISIBLE);
-                        mImageViewStatus.setImageResource(R.drawable.ic_error_outline_white_36dp);
-                        mTextViewStatusTitle.setText(R.string.main_dashboard_status_unknown_error);
-                        mTextViewStatusMessage.setText(error);
-                    } else {
-                        // Status
-                        String howMuchTimeUntilSmsSending = CRDUtils.secondsToHumanReadableCountDown(this, (int) (CRDUtils.getMillisUntilNextTuesdayMorning() / 1_000));
-
-                        mTextViewStatusTitle.setText(R.string.main_dashboard_status_scheduled);
-                        mTextViewStatusMessage.setText(getString(R.string.main_dashboard_status_scheduled_message, howMuchTimeUntilSmsSending));
-                    }
+                    mTextViewStatusTitle.setText(R.string.main_dashboard_status_scheduled);
+                    mTextViewStatusMessage.setText(getString(R.string.main_dashboard_status_scheduled_message, howMuchTimeUntilSmsSending));
                 }
             }
         }
@@ -208,6 +206,8 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
     }
 
     private void onRetryButtonClicked() {
+        CRDSharedPreferences.getInstance(this).clear();
+
         CRDUtils.sendSmsToOrange(this);
     }
 

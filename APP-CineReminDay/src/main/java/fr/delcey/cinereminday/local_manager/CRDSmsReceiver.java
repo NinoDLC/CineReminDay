@@ -39,11 +39,11 @@ public class CRDSmsReceiver extends BroadcastReceiver {
         }
 
         if (fromOrange) {
-            CRDSharedPreferences.getInstance(context).clear();
-
             Matcher matcher = CINEDAY_CODE_PATTERN.matcher(smsBuilder.toString());
 
             if (matcher.matches()) {
+                CRDSharedPreferences.getInstance(context).clear();
+
                 String cinedayCode = matcher.group();
 
                 // We save it in local
@@ -51,6 +51,8 @@ public class CRDSmsReceiver extends BroadcastReceiver {
 
                 // Don't spy on our beloved users !
                 CRDUtils.toggleSmsReceiver(context, false);
+
+                CRDUtils.scheduleWeeklyAlarm(context);
             } else {
                 CRDSharedPreferences.getInstance(context).setError(smsBuilder.toString());
             }

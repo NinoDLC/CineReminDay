@@ -13,6 +13,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import fr.delcey.cinereminday.CRDTimeManager;
 import fr.delcey.cinereminday.CRDUtils;
 
+import static fr.delcey.cinereminday.CRDUtils.isEpochBetweenTuesdayMorningAndTuesdayEvening;
+
 /**
  * Created by Nino on 16/03/2017.
  */
@@ -21,11 +23,11 @@ public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenc
     private static final String SHARED_PREF_IDENTIFIER = "prefs";
     private static final String SHARED_PREF_KEY_CINEDAY_EPOCH = "CINEDAY_EPOCH";
     private static final String SHARED_PREF_KEY_ERROR_EPOCH = "ERROR_EPOCH";
-    private static final String SHARED_PREF_KEY_SMS_JOB_SCHEDULED_EPOCH = "SMS_JOB_SCHEDULED_EPOCH";
 
     public static final String SHARED_PREF_KEY_CINEDAY = "CINEDAY";
     public static final String SHARED_PREF_KEY_ERROR = "ERROR";
     public static final String SHARED_PREF_KEY_SMS_SEND_EPOCH = "SMS_SEND_EPOCH";
+    public static final String SHARED_PREF_KEY_CANCEL_SMS_SENDING_EPOCH = "CANCEL_SMS_SENDING_EPOCH";
 
     // region Singleton
     private static volatile CRDSharedPreferences sCRDSharedPreferences;
@@ -69,27 +71,6 @@ public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenc
         return CRDUtils.isEpochBetweenTuesdayMorningAndTuesdayEvening(codeEpoch);
     }
 
-    public void setJobScheduled() {
-        mSharedPreferences.edit()
-                .putLong(SHARED_PREF_KEY_SMS_JOB_SCHEDULED_EPOCH, CRDTimeManager.getEpoch())
-                .apply();
-    }
-
-    public boolean isJobScheduledLessThan1HourAgo() {
-        long jobScheduledEpoch = mSharedPreferences.getLong(SHARED_PREF_KEY_SMS_JOB_SCHEDULED_EPOCH, -1);
-
-        if (jobScheduledEpoch == -1) {
-            return false;
-        }
-
-        // Job scheduler has a timeout of 2 hours
-        Calendar twoHourAgoEpoch = Calendar.getInstance();
-        twoHourAgoEpoch.setTimeInMillis(CRDTimeManager.getEpoch());
-        twoHourAgoEpoch.add(Calendar.HOUR, -2);
-
-        return new Date(jobScheduledEpoch).after(twoHourAgoEpoch.getTime());
-    }
-
     public void setSmsSendingTimestamp() {
         mSharedPreferences.edit()
                 .putLong(SHARED_PREF_KEY_SMS_SEND_EPOCH, CRDTimeManager.getEpoch())
@@ -111,6 +92,17 @@ public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenc
         return new Date(smsSendingEpoch).after(oneHourAgoEpoch.getTime());
     }
 
+    public boolean isSmsSentToday() {
+        long smsSendingEpoch = mSharedPreferences.getLong(SHARED_PREF_KEY_SMS_SEND_EPOCH, -1);
+
+        if (smsSendingEpoch == -1) {
+            return false;
+        }
+
+        return CRDUtils.isEpochBetweenTuesdayMorningAndTuesdayEvening(smsSendingEpoch);
+
+    }
+
     public void setError(String message) {
         mSharedPreferences.edit()
                 .putString(SHARED_PREF_KEY_ERROR, message)
@@ -127,6 +119,18 @@ public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenc
         }
 
         return null;
+    }
+
+    public void setCancelNextTuesdaySmsSending() { // TODO VOLKO ADD BUTTON TO STOP SMS SENDING FOR NEXT WEEK ON STATUS DASHBOARD
+        mSharedPreferences.edit()
+                .putLong(SHARED_PREF_KEY_CANCEL_SMS_SENDING_EPOCH, CRDTimeManager.getEpoch())
+                .apply();
+    }
+
+    public boolean shouldCancelNextSmsSending() {
+        long cancelEpoch = mSharedPreferences.getLong(SHARED_PREF_KEY_CANCEL_SMS_SENDING_EPOCH, -1);
+
+        return CRDUtils.isEpochBetweenTuesdayMorningAndNextTuesdayMorning(cancelEpoch);
     }
 
     public void clear() {

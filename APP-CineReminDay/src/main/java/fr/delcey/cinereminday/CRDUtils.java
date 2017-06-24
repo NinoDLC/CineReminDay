@@ -41,26 +41,26 @@ public class CRDUtils {
 
         Log.v(CRDUtils.class.getName(), "scheduleWeeklyAlarm() => Alarm scheduled in : " + "millisecondsUntilNextTuesdayMorning = [" + millisecondsUntilNextTuesdayMorning + "], which is around = [" + CRDUtils.secondsToHumanReadableCountDown(context, (int) millisecondsUntilNextTuesdayMorning / 1_000) + "]");
 
-        if (millisecondsUntilNextTuesdayMorning <= 0) {
-            if (!CRDSharedPreferences.getInstance(context).isJobScheduledLessThan1HourAgo()
-                    && !CRDSharedPreferences.getInstance(context).isSmsSentLessThan1HourAgo()
-                    && !CRDSharedPreferences.getInstance(context).isCinedayCodeValid()) {
-                CRDAlarmReceiver.scheduleSmsSending(context);
-            }
+        if (CRDUtils.isTodayTuesdayPast8AM()
+                && CRDUtils.isSmsPermissionOK(context)
+                && !CRDSharedPreferences.getInstance(context).isSmsSentToday()
+                && !CRDSharedPreferences.getInstance(context).isCinedayCodeValid()
+                && !CRDSharedPreferences.getInstance(context).shouldCancelNextSmsSending()) {
+            CRDAlarmReceiver.sendSms(context);
+        }
+
+        long currentTime = System.currentTimeMillis();
+        long scheduledTime = System.currentTimeMillis() + millisecondsUntilNextTuesdayMorning;
+
+        Log.v(CRDUtils.class.getName(), "scheduleWeeklyAlarm() => Alarm scheduled to happen at : " + "scheduledTime = [" + new DecimalFormat("#,###").format(scheduledTime) + "], currentTime is = [" + new DecimalFormat("#,###").format(currentTime) + "]");
+
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, scheduledTime, pendingIntent);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, scheduledTime, pendingIntent);
         } else {
-            long currentTime = System.currentTimeMillis();
-            long scheduledTime = System.currentTimeMillis() + millisecondsUntilNextTuesdayMorning;
-
-            Log.v(CRDUtils.class.getName(), "scheduleWeeklyAlarm() => Alarm scheduled to happen at : " + "scheduledTime = [" + new DecimalFormat("#,###").format(scheduledTime) + "], currentTime is = [" + new DecimalFormat("#,###").format(currentTime) + "]");
-
-            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, scheduledTime, pendingIntent);
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, scheduledTime, pendingIntent);
-            } else {
-                alarmManager.set(AlarmManager.RTC_WAKEUP, scheduledTime, pendingIntent);
-            }
+            alarmManager.set(AlarmManager.RTC_WAKEUP, scheduledTime, pendingIntent);
         }
     }
 
@@ -70,7 +70,7 @@ public class CRDUtils {
 
         setCalendarTimeToTuesdayMorning(calendar);
 
-        if (calendar.getTimeInMillis() < CRDTimeManager.getEpoch()) { // TODO VOLKO FIX https://stackoverflow.com/questions/44736642/calendar-dont-allow-past-timestamp
+        if (calendar.getTimeInMillis() < CRDTimeManager.getEpoch()) {
             calendar.add(Calendar.DAY_OF_YEAR, 7);
         }
 
@@ -170,6 +170,13 @@ public class CRDUtils {
         return result.toString();
     }
 
+    public static boolean isTodayMonday() {
+        Calendar today = Calendar.getInstance();
+        today.setTimeInMillis(CRDTimeManager.getEpoch());
+
+        return today.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY;
+    }
+
     public static boolean isTodayTuesday() {
         Calendar today = Calendar.getInstance();
         today.setTimeInMillis(CRDTimeManager.getEpoch());
@@ -177,15 +184,23 @@ public class CRDUtils {
         return today.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY;
     }
 
+    public static boolean isTodayTuesdayPast8AM() {
+        Calendar today = Calendar.getInstance();
+        today.setTimeInMillis(CRDTimeManager.getEpoch());
+
+        return today.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY
+                && today.get(Calendar.HOUR_OF_DAY) >= 8;
+    }
+
     public static void sendSmsToOrange(Context context) {
         if (ContextCompat.checkSelfPermission(context.getApplicationContext(), Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
             Log.v(CRDUtils.class.getName(), "sendSmsToOrange() => Sending SMS !");
             toggleSmsReceiver(context.getApplicationContext(), true);
 
+            CRDSharedPreferences.getInstance(context).setSmsSendingTimestamp();
+
             SmsManager smsManager = SmsManager.getDefault();
             smsManager.sendTextMessage(CRDUtils.ORANGE_CINEDAY_NUMBER, null, CRDUtils.ORANGE_CINEDAY_KEYWORD, null, null);
-
-            CRDSharedPreferences.getInstance(context.getApplicationContext()).setSmsSendingTimestamp();
         } else {
             Log.e(CRDUtils.class.getName(), "sendSmsToOrange() => FAILED TO SEND SMS ! (Missing permission)");
 
@@ -234,5 +249,26 @@ public class CRDUtils {
         long tuesdayEveningEpoch = tuesdayEvening.getTimeInMillis();
 
         return CRDUtils.isEpochBetween(codeEpoch, tuesdayMorningEpoch, tuesdayEveningEpoch);
+    }
+
+    public static boolean isEpochBetweenTuesdayMorningAndNextTuesdayMorning(long codeEpoch) {
+        Calendar tuesdayMorning = Calendar.getInstance();
+        tuesdayMorning.setTimeInMillis(CRDTimeManager.getEpoch());
+        tuesdayMorning.setFirstDayOfWeek(Calendar.WEDNESDAY);
+        tuesdayMorning.set(Calendar.DAY_OF_WEEK, Calendar.TUESDAY);
+        tuesdayMorning.set(Calendar.HOUR_OF_DAY, 8);
+        tuesdayMorning.set(Calendar.MINUTE, 0);
+        tuesdayMorning.set(Calendar.SECOND, 0);
+        tuesdayMorning.set(Calendar.MILLISECOND, 0);
+
+        long tuesdayMorningEpoch = tuesdayMorning.getTimeInMillis();
+
+        Calendar nextTuesdayMorning = Calendar.getInstance();
+        nextTuesdayMorning.setTimeInMillis(tuesdayMorningEpoch);
+        nextTuesdayMorning.add(Calendar.DAY_OF_YEAR, 7);
+
+        long nextTuesdayMorningEpoch = nextTuesdayMorning.getTimeInMillis();
+
+        return CRDUtils.isEpochBetween(codeEpoch, tuesdayMorningEpoch, nextTuesdayMorningEpoch);
     }
 }
