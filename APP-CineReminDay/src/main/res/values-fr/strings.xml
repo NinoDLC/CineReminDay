@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CinéReminDay</string>
+
+    <!-- Description text on images for accessibility -->
+    <string name="accessibility_application_settings">Paramètres d\'application</string>
+    <string name="accessibility_status">État</string>
+    <string name="accessibility_schedule_state">État de la programmation</string>
+    <string name="accessibility_permission">Permission</string>
+    <string name="accessibility_permission_state">État des permissions</string>
+    <string name="accessibility_cineday_code">Code Cinéday</string>
+    <string name="accessibility_share_code">Partage du code Cinéday</string>
+    <string name="accessibility_ask_code">Demande d\'un code Cinéday</string>
+
+    <!-- Status cardview -->
+    <string name="main_dashboard_status_error_permission_missing">État : Demande de permission</string>
+    <string name="main_dashboard_status_error_permission_missing_message">Besoin de la permission pour envoyer un SMS.</string>
+    <string name="main_dashboard_status_scheduled">État : Programmé</string>
+    <string name="main_dashboard_status_scheduled_message">Tout est bon, le code sera récupéré dans %s.</string>
+    <string name="main_dashboard_status_waiting_for_orange">État : En attente d\'Orange</string>
+    <string name="main_dashboard_status_waiting_for_orange_message">SMS envoyé, en attente d\'Orange pour fournir le code Cinéday…</string>
+    <string name="main_dashboard_status_code_ok">État : Bon film !</string>
+    <string name="main_dashboard_status_code_ok_message">Si vous appréciez l\'application, donnez une note sur le Store ! ☺</string>
+    <string name="main_dashboard_status_unknown_error">État : Erreur inconnue</string>
+    <string name="main_dashboard_status_unknown_error_message">C\'est pas bien.</string>
+    <string name="main_dashboard_status_retry_button">Rééssayer</string>
+    <string name="main_dashboard_status_visit_store_button">Aller sur le Store</string>
+
+    <!-- Permission cardview -->
+    <string name="main_dashboard_sms_permission">Permission SMS :</string>
+    <string name="main_dashboard_sms_permission_message">Je dois pouvoir envoyer un SMS au service Cinéday d\'Orange pour récupérer le code. Un SMS / semaine. Prix d\'un SMS normal.</string>
+    <string name="main_dashboard_sms_permission_button">Donner la permission</string>
+
+    <!-- Cineday code cardview -->
+    <string name="main_dashboard_cineday_code">Code Cinéday :</string>
+    <string name="main_dashboard_cineday_code_note">Valable aujourd\'hui uniquement !</string>
+
+    <!-- Cineday code sharing with community / friend cardview -->
+    <string name="main_dashboard_share_cineday_code">Partager son code Cineday :</string>
+    <string name="main_dashboard_share_cineday_code_message">Vous n\'allez pas au cinéma ce soir ? Faites un heureux et partagez votre code. C\'est la BA du jour !</string>
+    <string name="main_dashboard_share_cineday_code_button_community">Partager avec la communauté</string>
+    <string name="main_dashboard_share_cineday_code_button_friend">Partager avec un ami</string>
+    <string name="sms_default_message">Salut ! Je t\'offre le ciné ce soir avec un ami. Voici mon code Cinéday : %s, la deuxième place est offerte ! Crédit/App : CinéReminDay</string>
+
+    <!-- Cineday ask code to community cardview -->
+    <string name="main_dashboard_ask_code_cineday_code">Besoin d\'un code Cinéday aujourd\'hui ?</string>
+    <string name="main_dashboard_ask_code_cineday_code_message">Demandez à la communauté de partager un code avec vous !</string>
+    <string name="main_dashboard_ask_code_button">Demander un code</string>
+
+    <!-- Time convert -->
+    <string name="less_than_a_minute">moins d\'une minute</string>
+    <string name="hour">heure</string>
+    <string name="hours">heures</string>
+    <string name="day">jour</string>
+    <string name="days">jours</string>
+    <string name="minute">minute</string>
+    <string name="minutes">minutes</string>
+    <string name="and">et</string>
+</resources>
