@@ -27,13 +27,13 @@ public class CRDDebug {
 
                 CRDUtils.scheduleWeeklyAlarm(activity);
 
-                return "Today is now the next tuesday, 8:59:40 AM.";
+                return "Today is now the next tuesday, " + CRDUtils.epochToHumanReadableDate(CRDTimeManager.getEpoch());
             }
         }).addFunction(new DebugFunction("Time travel² (W)") {
             @Override
             public String call() throws Exception {
                 Calendar calendar = CRDUtils.getTrueTimeTuesdayCalendar();
-                calendar.add(Calendar.DAY_OF_YEAR, 1); // Wednesday, 09:00:00
+                calendar.add(Calendar.DAY_OF_YEAR, 1); // Wednesday, 08:10:00
 
                 CRDTimeManager.setEpoch(calendar.getTimeInMillis());
 
@@ -41,7 +41,7 @@ public class CRDDebug {
 
                 CRDUtils.scheduleWeeklyAlarm(activity);
 
-                return "Today is now the next wednesday, 9:00:00 AM.";
+                return "Today is now the next wednesday, " +CRDUtils.epochToHumanReadableDate(CRDTimeManager.getEpoch());
             }
         }).addFunction(new DebugFunction("Time travel³ (+1D)") {
             @Override
@@ -56,7 +56,7 @@ public class CRDDebug {
 
                 CRDUtils.scheduleWeeklyAlarm(activity);
 
-                return "Leaped forward in time of 24 hours. Today is now " + CRDUtils.epochToHumanReadableDate(calendar.getTimeInMillis());
+                return "Leaped forward in time of 24 hours. Today is now " + CRDUtils.epochToHumanReadableDate(CRDTimeManager.getEpoch());
             }
         }).addFunction(new DebugFunction("Time travel^4 (+7D)") {
             @Override
@@ -71,7 +71,7 @@ public class CRDDebug {
 
                 CRDUtils.scheduleWeeklyAlarm(activity);
 
-                return "Leaped forward in time of 7 days. Today is now " + CRDUtils.epochToHumanReadableDate(calendar.getTimeInMillis());
+                return "Leaped forward in time of 7 days. Today is now " + CRDUtils.epochToHumanReadableDate(CRDTimeManager.getEpoch());
             }
         }).addFunction(new DebugFunction("Today is today") {
             @Override
@@ -130,6 +130,8 @@ public class CRDDebug {
 
                 activity.manageCardviews();
 
+                CRDUtils.scheduleWeeklyAlarm(activity);
+
                 return "Application RESET !";
             }
         });
@@ -139,7 +141,7 @@ public class CRDDebug {
 
     private static void timeTravelToTuesdayMorning() {
         Calendar calendar = CRDUtils.getTrueTimeTuesdayCalendar();
-        calendar.add(Calendar.SECOND, -20); // 8:59:40
+        calendar.add(Calendar.SECOND, -20); // 8:09:40
 
         CRDTimeManager.setEpoch(calendar.getTimeInMillis());
     }

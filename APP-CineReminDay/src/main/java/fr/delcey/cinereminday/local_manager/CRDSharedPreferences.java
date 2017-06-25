@@ -66,7 +66,7 @@ public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenc
     public boolean isCinedayCodeValid() {
         long codeEpoch = mSharedPreferences.getLong(SHARED_PREF_KEY_CINEDAY_EPOCH, -1);
 
-        return CRDUtils.isEpochBetweenTuesdayMorningAndTuesdayEvening(codeEpoch);
+        return CRDUtils.isEpochBetweenTuesday8AMAndTuesdayEvening(codeEpoch);
     }
 
     public void setSmsSendingTimestamp() {
@@ -112,7 +112,7 @@ public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenc
     public String getTodayError() {
         long errorEpoch = mSharedPreferences.getLong(SHARED_PREF_KEY_ERROR_EPOCH, -1);
 
-        if (CRDUtils.isEpochBetweenTuesdayMorningAndTuesdayEvening(errorEpoch)) {
+        if (CRDUtils.isEpochBetweenTuesday8AMAndTuesdayEvening(errorEpoch)) {
             return mSharedPreferences.getString(SHARED_PREF_KEY_ERROR, null);
         }
 

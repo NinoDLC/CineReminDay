@@ -34,7 +34,7 @@ public class CRDUtils {
     public static final String ORANGE_CINEDAY_NUMBER = "20000";
     public static final String ORANGE_CINEDAY_KEYWORD = "ciné";
 
-    // Wakes up the app at 9:00 AM on Tuesdays
+    // Wakes up the app at 8:10 AM on Tuesdays
     public static void scheduleWeeklyAlarm(@NonNull Context context) {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, new Intent(context, CRDAlarmReceiver.class), 0);
 
@@ -42,7 +42,7 @@ public class CRDUtils {
 
         Log.v(CRDUtils.class.getName(), "scheduleWeeklyAlarm() => Alarm scheduled in : " + "millisecondsUntilNextTuesdayMorning = [" + millisecondsUntilNextTuesdayMorning + "], which is around = [" + CRDUtils.secondsToHumanReadableCountDown(context, (int) millisecondsUntilNextTuesdayMorning / 1_000) + "]");
 
-        if (CRDUtils.isTodayTuesdayPast8AM()
+        if (CRDUtils.isTodayTuesdayPast8AM10()
                 && CRDUtils.isSmsPermissionOK(context)
                 && !CRDSharedPreferences.getInstance(context).isSmsSentToday()
                 && !CRDSharedPreferences.getInstance(context).isCinedayCodeValid()
@@ -94,9 +94,9 @@ public class CRDUtils {
 
     private static Calendar setCalendarTimeToTuesdayMorning(Calendar calendar) {
         calendar.setFirstDayOfWeek(Calendar.WEDNESDAY); // Trick not to get a "tuesday" timestamp in the past !
-        calendar.set(Calendar.DAY_OF_WEEK, Calendar.TUESDAY);
-        calendar.set(Calendar.HOUR_OF_DAY, 9);
-        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.TUESDAY); // TODO VOLKO REFACTO TUESDAY MORNING CALENDAR
+        calendar.set(Calendar.HOUR_OF_DAY, 8);
+        calendar.set(Calendar.MINUTE, 10);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
 
@@ -189,12 +189,13 @@ public class CRDUtils {
         return today.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY;
     }
 
-    public static boolean isTodayTuesdayPast8AM() {
+    public static boolean isTodayTuesdayPast8AM10() {
         Calendar today = Calendar.getInstance();
         today.setTimeInMillis(CRDTimeManager.getEpoch());
 
-        return today.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY
-                && today.get(Calendar.HOUR_OF_DAY) >= 8;
+        return today.get(Calendar.DAY_OF_WEEK) == Calendar.TUESDAY // TODO VOLKO REFACTO TUESDAY MORNING CALENDAR
+                && today.get(Calendar.HOUR_OF_DAY) >= 8
+                && today.get(Calendar.MINUTE) >= 10;
     }
 
     public static void sendSmsToOrange(Context context) {
@@ -229,14 +230,41 @@ public class CRDUtils {
                 && ContextCompat.checkSelfPermission(context, Manifest.permission.RECEIVE_SMS) == android.content.pm.PackageManager.PERMISSION_GRANTED;
     }
 
-    public static boolean isEpochBetweenTuesdayMorningAndTuesdayEvening(long codeEpoch) {
+    public static boolean isEpochBetweenTuesday8AMAndTuesdayEvening(long codeEpoch) {
         // Code is valid only between 0800 and 2359, on tuesday
         Calendar tuesdayMorning = Calendar.getInstance();
         tuesdayMorning.setTimeInMillis(CRDTimeManager.getEpoch());
         tuesdayMorning.setFirstDayOfWeek(Calendar.WEDNESDAY);
-        tuesdayMorning.set(Calendar.DAY_OF_WEEK, Calendar.TUESDAY);
+        tuesdayMorning.set(Calendar.DAY_OF_WEEK, Calendar.TUESDAY); // TODO VOLKO REFACTO TUESDAY MORNING CALENDAR
         tuesdayMorning.set(Calendar.HOUR_OF_DAY, 8);
         tuesdayMorning.set(Calendar.MINUTE, 0);
+        tuesdayMorning.set(Calendar.SECOND, 0);
+        tuesdayMorning.set(Calendar.MILLISECOND, 0);
+
+        long tuesdayMorningEpoch = tuesdayMorning.getTimeInMillis();
+
+        Calendar tuesdayEvening = Calendar.getInstance();
+        tuesdayEvening.setTimeInMillis(CRDTimeManager.getEpoch());
+        tuesdayEvening.setFirstDayOfWeek(Calendar.WEDNESDAY);
+        tuesdayEvening.set(Calendar.DAY_OF_WEEK, Calendar.TUESDAY);
+        tuesdayEvening.set(Calendar.HOUR_OF_DAY, 23);
+        tuesdayEvening.set(Calendar.MINUTE, 59);
+        tuesdayEvening.set(Calendar.SECOND, 59);
+        tuesdayEvening.set(Calendar.MILLISECOND, 999);
+
+        long tuesdayEveningEpoch = tuesdayEvening.getTimeInMillis();
+
+        return CRDUtils.isEpochBetween(codeEpoch, tuesdayMorningEpoch, tuesdayEveningEpoch);
+    }
+
+    public static boolean isEpochBetweenTuesdayMorningAndTuesdayEvening(long codeEpoch) {
+        // SMS sending should occur between 0810 and 2359, on tuesday
+        Calendar tuesdayMorning = Calendar.getInstance();
+        tuesdayMorning.setTimeInMillis(CRDTimeManager.getEpoch());
+        tuesdayMorning.setFirstDayOfWeek(Calendar.WEDNESDAY);
+        tuesdayMorning.set(Calendar.DAY_OF_WEEK, Calendar.TUESDAY); // TODO VOLKO REFACTO TUESDAY MORNING CALENDAR
+        tuesdayMorning.set(Calendar.HOUR_OF_DAY, 8);
+        tuesdayMorning.set(Calendar.MINUTE, 10);
         tuesdayMorning.set(Calendar.SECOND, 0);
         tuesdayMorning.set(Calendar.MILLISECOND, 0);
 
@@ -260,9 +288,9 @@ public class CRDUtils {
         Calendar tuesdayMorning = Calendar.getInstance();
         tuesdayMorning.setTimeInMillis(CRDTimeManager.getEpoch());
         tuesdayMorning.setFirstDayOfWeek(Calendar.WEDNESDAY);
-        tuesdayMorning.set(Calendar.DAY_OF_WEEK, Calendar.TUESDAY);
+        tuesdayMorning.set(Calendar.DAY_OF_WEEK, Calendar.TUESDAY); // TODO VOLKO REFACTO TUESDAY MORNING CALENDAR
         tuesdayMorning.set(Calendar.HOUR_OF_DAY, 8);
-        tuesdayMorning.set(Calendar.MINUTE, 0);
+        tuesdayMorning.set(Calendar.MINUTE, 10);
         tuesdayMorning.set(Calendar.SECOND, 0);
         tuesdayMorning.set(Calendar.MILLISECOND, 0);
 
