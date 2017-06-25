@@ -13,8 +13,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import fr.delcey.cinereminday.CRDTimeManager;
 import fr.delcey.cinereminday.CRDUtils;
 
-import static fr.delcey.cinereminday.CRDUtils.isEpochBetweenTuesdayMorningAndTuesdayEvening;
-
 /**
  * Created by Nino on 16/03/2017.
  */

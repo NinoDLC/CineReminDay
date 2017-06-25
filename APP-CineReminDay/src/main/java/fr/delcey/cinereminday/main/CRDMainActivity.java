@@ -29,8 +29,6 @@ import fr.delcey.cinereminday.CRDUtils;
 import fr.delcey.cinereminday.R;
 import fr.delcey.cinereminday.local_manager.CRDSharedPreferences;
 
-import static java.security.AccessController.getContext;
-
 public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.OnRequestPermissionsResultCallback, CRDSharedPreferences.OnSharedPreferenceListener {
 
     // Status

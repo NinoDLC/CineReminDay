@@ -13,6 +13,7 @@ import android.support.v4.content.ContextCompat;
 import android.telephony.SmsManager;
 import android.util.Log;
 
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -62,6 +63,10 @@ public class CRDUtils {
         } else {
             alarmManager.set(AlarmManager.RTC_WAKEUP, scheduledTime, pendingIntent);
         }
+    }
+
+    public static String epochToHumanReadableDate(long epoch){
+        return DateFormat.getDateTimeInstance().format(new Date(epoch));
     }
 
     public static long getMillisUntilNextTuesdayMorning() {

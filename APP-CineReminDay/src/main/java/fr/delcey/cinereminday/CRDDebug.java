@@ -14,8 +14,6 @@ import fr.delcey.cinereminday.main.CRDMainActivity;
  */
 
 public class CRDDebug {
-    private static boolean sSmsReceiverEnabled = true;
-
     public static void addDebugMenu(final CRDMainActivity activity) {
         // Add debug menu
         final DevTool.Builder builder = new DevTool.Builder(activity);
@@ -31,7 +29,7 @@ public class CRDDebug {
 
                 return "Today is now the next tuesday, 8:59:40 AM.";
             }
-        }).addFunction(new DebugFunction("Time travel²") {
+        }).addFunction(new DebugFunction("Time travel² (W)") {
             @Override
             public String call() throws Exception {
                 Calendar calendar = CRDUtils.getTrueTimeTuesdayCalendar();
@@ -44,6 +42,36 @@ public class CRDDebug {
                 CRDUtils.scheduleWeeklyAlarm(activity);
 
                 return "Today is now the next wednesday, 9:00:00 AM.";
+            }
+        }).addFunction(new DebugFunction("Time travel³ (+1D)") {
+            @Override
+            public String call() throws Exception {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(CRDTimeManager.getEpoch());
+                calendar.add(Calendar.DAY_OF_YEAR, 1);
+
+                CRDTimeManager.setEpoch(calendar.getTimeInMillis());
+
+                activity.manageCardviews();
+
+                CRDUtils.scheduleWeeklyAlarm(activity);
+
+                return "Leaped forward in time of 24 hours. Today is now " + CRDUtils.epochToHumanReadableDate(calendar.getTimeInMillis());
+            }
+        }).addFunction(new DebugFunction("Time travel^4 (+7D)") {
+            @Override
+            public String call() throws Exception {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(CRDTimeManager.getEpoch());
+                calendar.add(Calendar.DAY_OF_YEAR, 7);
+
+                CRDTimeManager.setEpoch(calendar.getTimeInMillis());
+
+                activity.manageCardviews();
+
+                CRDUtils.scheduleWeeklyAlarm(activity);
+
+                return "Leaped forward in time of 7 days. Today is now " + CRDUtils.epochToHumanReadableDate(calendar.getTimeInMillis());
             }
         }).addFunction(new DebugFunction("Today is today") {
             @Override
@@ -93,14 +121,16 @@ public class CRDDebug {
 
                 return "Truely sent a SMS to Orange to get a Cineday code";
             }
-        }).addFunction(new DebugFunction("Toggle SMS receiver") {
+        }).addFunction(new DebugFunction("Reset") {
             @Override
             public String call() throws Exception {
-                sSmsReceiverEnabled = !sSmsReceiverEnabled;
+                CRDTimeManager.reset();
 
-                CRDUtils.toggleSmsReceiver(activity, sSmsReceiverEnabled);
+                CRDSharedPreferences.getInstance(activity).clear();
 
-                return "SMS Receiver is now : " + (sSmsReceiverEnabled ? "ON" : "OFF");
+                activity.manageCardviews();
+
+                return "Application RESET !";
             }
         });
 
