@@ -31,6 +31,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
  * Created by Nino on 12/03/2017.
  */
 public abstract class CRDAuthActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+    private boolean mFirebaseAuthentificated = false;
 
     private FirebaseAuth.AuthStateListener mFirebaseAuthListener;
     private GoogleApiClient mGoogleApiClient;
@@ -47,8 +48,13 @@ public abstract class CRDAuthActivity extends AppCompatActivity implements Googl
                 FirebaseUser user = firebaseAuth.getCurrentUser();
 
                 if (user != null) {
-                    onFirebaseUserSignedIn(user);
+                    if (!mFirebaseAuthentificated) {
+                        mFirebaseAuthentificated = true;
+
+                        onFirebaseUserSignedIn(user);
+                    }
                 } else {
+                    mFirebaseAuthentificated = false;
                     onFirebaseUserSignedOut();
                 }
             }
@@ -101,6 +107,14 @@ public abstract class CRDAuthActivity extends AppCompatActivity implements Googl
         }
     }
 
+    protected boolean isGoogleUserConnected() {
+        return mGoogleApiClient != null && mGoogleApiClient.isConnected();
+    }
+
+    protected boolean isFirebaseAuthentificated() {
+        return mFirebaseAuthentificated;
+    }
+
     private void logInToFirebaseWithGoogleSignIn(GoogleSignInAccount googleSignInAccount) {
         Log.v(CRDAuthActivity.class.getName(), "logInToFirebaseWithGoogleSignIn() called with: " + "googleSignInAccount = [" + googleSignInAccount + "]");
 
@@ -148,6 +162,8 @@ public abstract class CRDAuthActivity extends AppCompatActivity implements Googl
      * User has not / never connected to Firebase.
      */
     protected void onFirebaseUserSignedOut() {
+        mFirebaseAuthentificated = false;
+
         Log.v(CRDAuthActivity.class.getName(), "onFirebaseUserSignedOut() called, USER IS SIGNED OUT ! ");
     }
 
@@ -155,14 +171,14 @@ public abstract class CRDAuthActivity extends AppCompatActivity implements Googl
      * Part 1 of sign in failed : user canceled the pop up to connect or used bad credentials
      */
     protected void onGoogleConnectionFailed() {
-
+        mFirebaseAuthentificated = false;
     }
 
     /**
      * Part 2 of sign in failed : we couldn't auth the google user through firebase. This is bad and this is our fault
      */
     protected void onFirebaseConnectionFailed() {
-
+        mFirebaseAuthentificated = false;
     }
 
     /**

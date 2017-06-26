@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,15 +22,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseUser;
+import com.wang.avi.AVLoadingIndicatorView;
+
 import fr.delcey.cinereminday.BuildConfig;
 import fr.delcey.cinereminday.CRDAuthActivity;
 import fr.delcey.cinereminday.CRDConstants;
 import fr.delcey.cinereminday.CRDDebug;
 import fr.delcey.cinereminday.CRDUtils;
 import fr.delcey.cinereminday.R;
+import fr.delcey.cinereminday.cloud_manager.CRDCloudCodeManager;
 import fr.delcey.cinereminday.local_manager.CRDSharedPreferences;
 
 public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.OnRequestPermissionsResultCallback, CRDSharedPreferences.OnSharedPreferenceListener {
+
+    // ProgressBar
+    private AVLoadingIndicatorView mCustomProgressBar;
+    private View mCustomProgressBarBackground;
 
     // Status
     private Button mButtonStatusStore;
@@ -45,6 +54,9 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
     private CardView mCardviewCinedayCode;
     private TextView mTextViewCinedayCode;
 
+    // Shared - awesome
+    private CardView mCardviewSharedCinedayCode;
+
     // Share
     private CardView mCardviewShareCinedayCode;
 
@@ -55,11 +67,18 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
     private BroadcastReceiver mTimeTickingBroadcastReceiver;
     private BroadcastReceiver mTimeChangedBroadcastReceiver;
 
+    // Code cloud manager
+    private CRDCloudCodeManager mCinedayCodeManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.main_activity);
+
+        // ProgressBar
+        mCustomProgressBar = (AVLoadingIndicatorView) findViewById(R.id.main_pb);
+        mCustomProgressBarBackground = findViewById(R.id.main_pb_background);
 
         // Status
         mButtonStatusRetry = (Button) findViewById(R.id.main_dashboard_item_status_btn_retry);
@@ -94,6 +113,9 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
         mCardviewCinedayCode = (CardView) findViewById(R.id.main_dashboard_item_cv_show_code);
         mTextViewCinedayCode = (TextView) findViewById(R.id.main_dashboard_item_show_code_tv_code);
 
+        // Shared - awesome
+        mCardviewSharedCinedayCode = (CardView) findViewById(R.id.main_dashboard_item_cv_awesome);
+
         // Share
         mCardviewShareCinedayCode = (CardView) findViewById(R.id.main_dashboard_item_cv_share);
         Button buttonShareCinedayCodeCommunity = (Button) findViewById(R.id.main_dashboard_item_share_btn_share_code_community);
@@ -120,6 +142,8 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
                 onAskCinedayCodeFirebaseButtonClicked();
             }
         });
+
+        mCinedayCodeManager = new CRDCloudCodeManager();
     }
 
     @Override
@@ -160,6 +184,9 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
             // Cineday Code
             mCardviewCinedayCode.setVisibility(View.GONE);
 
+            // Shared - awesome
+            mCardviewSharedCinedayCode.setVisibility(View.GONE);
+
             // Share code
             mCardviewShareCinedayCode.setVisibility(View.GONE);
         } else {
@@ -178,6 +205,9 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
                 mCardviewCinedayCode.setVisibility(View.VISIBLE);
                 mTextViewCinedayCode.setText(CRDSharedPreferences.getInstance(this).getCinedayCode());
 
+                // Shared - awesome
+                mCardviewSharedCinedayCode.setVisibility(View.GONE);
+
                 // Share code
                 mCardviewShareCinedayCode.setVisibility(View.VISIBLE);
             } else {
@@ -187,19 +217,25 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
                 // Share code
                 mCardviewShareCinedayCode.setVisibility(View.GONE);
 
+                // Shared - awesome
+                if (CRDSharedPreferences.getInstance(this).isCinedayCodeGivenToday()) {
+                    mCardviewSharedCinedayCode.setVisibility(View.VISIBLE);
+                } else {
+                    mCardviewSharedCinedayCode.setVisibility(View.GONE);
+                }
+
                 String error = CRDSharedPreferences.getInstance(this).getTodayError();
 
+                // Status
                 if (error != null && CRDUtils.isTodayTuesday()) {
                     mButtonStatusRetry.setVisibility(View.VISIBLE);
                     mImageViewStatus.setImageResource(R.drawable.ic_error_outline_white_36dp);
                     mTextViewStatusTitle.setText(R.string.main_dashboard_status_unknown_error);
                     mTextViewStatusMessage.setText(error);
                 } else if (CRDSharedPreferences.getInstance(this).isSmsSentLessThan1HourAgo()) {
-                    // Status
                     mTextViewStatusTitle.setText(R.string.main_dashboard_status_waiting_for_orange);
                     mTextViewStatusMessage.setText(R.string.main_dashboard_status_waiting_for_orange_message);
                 } else {
-                    // Status
                     String howMuchTimeUntilSmsSending = CRDUtils.secondsToHumanReadableCountDown(this, (int) (CRDUtils.getMillisUntilNextTuesdayMorning() / 1_000));
 
                     mTextViewStatusTitle.setText(R.string.main_dashboard_status_scheduled);
@@ -208,7 +244,8 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
             }
         }
 
-        if (CRDUtils.isTodayTuesday()) {
+        if (CRDUtils.isTodayTuesday()
+                && !CRDSharedPreferences.getInstance(this).isCinedayCodeValid()) {
             mCardviewAskCinedayCode.setVisibility(View.VISIBLE);
         } else {
             mCardviewAskCinedayCode.setVisibility(View.GONE);
@@ -233,8 +270,17 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
     }
 
     private void onShareCinedayCodeCommunityButtonClicked() {
-        // TODO VOLKO SHARE WITH FIREBASE
-        Toast.makeText(this, "WIP... Stand by!", Toast.LENGTH_LONG).show();
+        String cinedayCode = CRDSharedPreferences.getInstance(this).getCinedayCode();
+
+        if (cinedayCode != null && !cinedayCode.isEmpty()) {
+            if (isGoogleUserConnected() && isFirebaseAuthentificated()) {
+                shareCinedayCode(cinedayCode);
+            } else {
+                CRDSharedPreferences.getInstance(this).setCinedayCodeToShare(cinedayCode);
+
+                signInWithGoogle();
+            }
+        }
     }
 
     private void onShareCinedayCodeFriendButtonClicked() {
@@ -245,8 +291,11 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
     }
 
     private void onAskCinedayCodeFirebaseButtonClicked() {
-        // TODO VOLKO QUERY ON FIREBASE
-        Toast.makeText(this, "WIP... Stand by!", Toast.LENGTH_LONG).show();
+        if (isGoogleUserConnected() && isFirebaseAuthentificated()) {
+            getCinedayCode(); // TODO VOLKO MAKE USER WAIT ?
+        } else {
+            signInWithGoogle();
+        }
     }
 
     @Override
@@ -283,7 +332,8 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
         CRDSharedPreferences.getInstance(this).addOnSharedPreferenceListener(this,
                 CRDSharedPreferences.SHARED_PREF_KEY_CINEDAY,
                 CRDSharedPreferences.SHARED_PREF_KEY_SMS_SEND_EPOCH,
-                CRDSharedPreferences.SHARED_PREF_KEY_ERROR);
+                CRDSharedPreferences.SHARED_PREF_KEY_ERROR,
+                CRDSharedPreferences.SHARED_PREF_KEY_CINEDAY_CODE_GIVEN_EPOCH);
 
         CRDUtils.scheduleWeeklyAlarm(this);
 
@@ -334,9 +384,75 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
         }
     }
 
+    private void shareCinedayCode(String cinedayCodeToShare) {
+        mCustomProgressBar.setVisibility(View.VISIBLE);
+        mCustomProgressBarBackground.setVisibility(View.VISIBLE);
+
+        mCinedayCodeManager.shareCinedayCode(cinedayCodeToShare, new CRDCloudCodeManager.OnCodeSharedCallback() {
+            @Override
+            public void onCodeShared() {
+                CRDSharedPreferences.getInstance(CRDMainActivity.this).clear();
+                CRDSharedPreferences.getInstance(CRDMainActivity.this).setCinedayCodeGiven();
+
+                mCustomProgressBar.setVisibility(View.GONE);
+                mCustomProgressBarBackground.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onCodeSharingFailed(String error) {
+                Log.e(CRDMainActivity.class.getName(), "shareCinedayCode.onCodeSharingFailed() called with: " + "error = [" + error + "]");
+
+                Toast.makeText(CRDMainActivity.this, error, Toast.LENGTH_LONG).show();
+
+                mCustomProgressBar.setVisibility(View.GONE);
+                mCustomProgressBarBackground.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    private void getCinedayCode() {
+        mCustomProgressBar.setVisibility(View.VISIBLE);
+        mCustomProgressBarBackground.setVisibility(View.VISIBLE);
+
+        mCinedayCodeManager.queryCinedayCode(new CRDCloudCodeManager.OnCodeQueriedCallback() {
+            @Override
+            public void onCodeQueried(String cinedayCode) {
+                CRDSharedPreferences.getInstance(CRDMainActivity.this).setCinedayCode(cinedayCode);
+
+                mCustomProgressBar.setVisibility(View.GONE);
+                mCustomProgressBarBackground.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onCodeQueryingResultEmpty() {
+                Toast.makeText(CRDMainActivity.this, R.string.no_available_cineday_code, Toast.LENGTH_LONG).show();
+
+                mCustomProgressBar.setVisibility(View.GONE);
+                mCustomProgressBarBackground.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onCodeQueryingFailed(String error) {
+                Toast.makeText(CRDMainActivity.this, error, Toast.LENGTH_LONG).show();
+
+                mCustomProgressBar.setVisibility(View.GONE);
+                mCustomProgressBarBackground.setVisibility(View.GONE);
+            }
+        });
+    }
+
     @Override
     public void onSharedPreferenceChanged(@NonNull String key, @Nullable Object value) {
         // TODO VOLKO WHY NOT A NICE LITTLE ANIMATION FOR CODE ? OR EVEN SMS SENDING ^.^
         manageCardviews();
+    }
+
+    @Override
+    protected void onFirebaseUserSignedIn(FirebaseUser user) {
+        super.onFirebaseUserSignedIn(user);
+
+        if (CRDSharedPreferences.getInstance(this).isCinedayCodeToShareValid()) {
+            shareCinedayCode(CRDSharedPreferences.getInstance(this).getCinedayCodeToShare());
+        }
     }
 }

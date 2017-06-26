@@ -20,12 +20,15 @@ import fr.delcey.cinereminday.CRDUtils;
 public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String SHARED_PREF_IDENTIFIER = "prefs";
     private static final String SHARED_PREF_KEY_CINEDAY_EPOCH = "CINEDAY_EPOCH";
+    private static final String SHARED_PREF_KEY_CINEDAY_TO_SHARE_EPOCH = "CINEDAY_TO_SHARE_EPOCH";
     private static final String SHARED_PREF_KEY_ERROR_EPOCH = "ERROR_EPOCH";
 
     public static final String SHARED_PREF_KEY_CINEDAY = "CINEDAY";
+    public static final String SHARED_PREF_KEY_CINEDAY_TO_SHARE = "CINEDAY_TO_SHARE";
     public static final String SHARED_PREF_KEY_ERROR = "ERROR";
     public static final String SHARED_PREF_KEY_SMS_SEND_EPOCH = "SMS_SEND_EPOCH";
     public static final String SHARED_PREF_KEY_CANCEL_SMS_SENDING_EPOCH = "CANCEL_SMS_SENDING_EPOCH";
+    public static final String SHARED_PREF_KEY_CINEDAY_CODE_GIVEN_EPOCH = "CINEDAY_CODE_GIVEN_EPOCH";
 
     // region Singleton
     private static volatile CRDSharedPreferences sCRDSharedPreferences;
@@ -51,7 +54,7 @@ public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenc
 
     private SharedPreferences mSharedPreferences;
 
-    public void setCinedayCode(String cinedayCode) {
+    public void setCinedayCode(@NonNull String cinedayCode) {
         mSharedPreferences.edit()
                 .putString(SHARED_PREF_KEY_CINEDAY, cinedayCode)
                 .putLong(SHARED_PREF_KEY_CINEDAY_EPOCH, CRDTimeManager.getEpoch())
@@ -67,6 +70,32 @@ public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenc
         long codeEpoch = mSharedPreferences.getLong(SHARED_PREF_KEY_CINEDAY_EPOCH, -1);
 
         return CRDUtils.isEpochBetweenTuesday8AMAndTuesdayEvening(codeEpoch);
+    }
+
+    public void setCinedayCodeToShare(@Nullable String cinedayCode) {
+        if (cinedayCode == null) {
+            mSharedPreferences.edit()
+                    .remove(SHARED_PREF_KEY_CINEDAY_TO_SHARE)
+                    .remove(SHARED_PREF_KEY_CINEDAY_TO_SHARE_EPOCH)
+                    .apply();
+        } else {
+            mSharedPreferences.edit()
+                    .putString(SHARED_PREF_KEY_CINEDAY_TO_SHARE, cinedayCode)
+                    .putLong(SHARED_PREF_KEY_CINEDAY_TO_SHARE_EPOCH, CRDTimeManager.getEpoch())
+                    .apply();
+        }
+    }
+
+    @Nullable
+    public String getCinedayCodeToShare() {
+        return mSharedPreferences.getString(SHARED_PREF_KEY_CINEDAY_TO_SHARE, null);
+    }
+
+    public boolean isCinedayCodeToShareValid() {
+        long codeEpoch = mSharedPreferences.getLong(SHARED_PREF_KEY_CINEDAY_TO_SHARE_EPOCH, -1);
+
+        return CRDUtils.isEpochBetweenTuesdayMorningAndTuesdayEvening(codeEpoch)
+                && mSharedPreferences.getString(SHARED_PREF_KEY_CINEDAY_TO_SHARE, null) != null;
     }
 
     public void setSmsSendingTimestamp() {
@@ -129,6 +158,18 @@ public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenc
         long cancelEpoch = mSharedPreferences.getLong(SHARED_PREF_KEY_CANCEL_SMS_SENDING_EPOCH, -1);
 
         return CRDUtils.isEpochBetweenTuesdayMorningAndNextTuesdayMorning(cancelEpoch);
+    }
+
+    public void setCinedayCodeGiven() {
+        mSharedPreferences.edit()
+                .putLong(SHARED_PREF_KEY_CINEDAY_CODE_GIVEN_EPOCH, CRDTimeManager.getEpoch())
+                .apply();
+    }
+
+    public boolean isCinedayCodeGivenToday() {
+        long codeGivenEpoch = mSharedPreferences.getLong(SHARED_PREF_KEY_CINEDAY_CODE_GIVEN_EPOCH, -1);
+
+        return CRDUtils.isEpochBetweenTuesdayMorningAndNextTuesdayMorning(codeGivenEpoch);
     }
 
     public void clear() {

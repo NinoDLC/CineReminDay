@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="open_debug_menu">Open debug menu</string>
+    <string name="open_debug_menu">Debug</string>
 </resources>
