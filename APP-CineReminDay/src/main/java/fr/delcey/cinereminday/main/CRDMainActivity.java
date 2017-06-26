@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.CardView;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -62,6 +63,9 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
 
     // Ask
     private CardView mCardviewAskCinedayCode;
+
+    // Telephone carrier
+    private CardView mCardviewWrongCarrier;
 
     // Broadcast receiver about time
     private BroadcastReceiver mTimeTickingBroadcastReceiver;
@@ -143,6 +147,9 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
             }
         });
 
+        // Telephone carrier
+        mCardviewWrongCarrier = (CardView) findViewById(R.id.main_dashboard_item_cv_wrong_carrier);
+
         mCinedayCodeManager = new CRDCloudCodeManager();
     }
 
@@ -180,68 +187,69 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
 
             // Permission
             mCardviewSmsPermission.setVisibility(View.VISIBLE);
+        } else {
+            // Status
+            String howMuchTimeUntilSmsSending = CRDUtils.secondsToHumanReadableCountDown(this, (int) (CRDUtils.getMillisUntilNextTuesdayMorning() / 1_000));
+
+            mImageViewStatus.setImageResource(R.drawable.ic_done_white_36dp);
+            mTextViewStatusTitle.setText(R.string.main_dashboard_status_scheduled);
+            mTextViewStatusMessage.setText(getString(R.string.main_dashboard_status_scheduled_message, howMuchTimeUntilSmsSending));
+
+            // Permission
+            mCardviewSmsPermission.setVisibility(View.GONE);
+        }
+
+        if (CRDSharedPreferences.getInstance(this).isCinedayCodeValid()) {
+            // Status
+            mTextViewStatusTitle.setText(R.string.main_dashboard_status_code_ok);
+            mTextViewStatusMessage.setText(R.string.main_dashboard_status_code_ok_message);
+            mButtonStatusStore.setVisibility(View.VISIBLE);
 
             // Cineday Code
-            mCardviewCinedayCode.setVisibility(View.GONE);
+            mCardviewCinedayCode.setVisibility(View.VISIBLE);
+            mTextViewCinedayCode.setText(CRDSharedPreferences.getInstance(this).getCinedayCode());
 
             // Shared - awesome
             mCardviewSharedCinedayCode.setVisibility(View.GONE);
 
             // Share code
-            mCardviewShareCinedayCode.setVisibility(View.GONE);
+            mCardviewShareCinedayCode.setVisibility(View.VISIBLE);
         } else {
-            mImageViewStatus.setImageResource(R.drawable.ic_done_white_36dp);
+            // Cineday Code
+            mCardviewCinedayCode.setVisibility(View.GONE);
 
-            // Permission
-            mCardviewSmsPermission.setVisibility(View.GONE);
+            // Share code
+            mCardviewShareCinedayCode.setVisibility(View.GONE);
 
-            if (CRDSharedPreferences.getInstance(this).isCinedayCodeValid()) {
-                // Status
-                mTextViewStatusTitle.setText(R.string.main_dashboard_status_code_ok);
-                mTextViewStatusMessage.setText(R.string.main_dashboard_status_code_ok_message);
-                mButtonStatusStore.setVisibility(View.VISIBLE);
-
-                // Cineday Code
-                mCardviewCinedayCode.setVisibility(View.VISIBLE);
-                mTextViewCinedayCode.setText(CRDSharedPreferences.getInstance(this).getCinedayCode());
-
-                // Shared - awesome
-                mCardviewSharedCinedayCode.setVisibility(View.GONE);
-
-                // Share code
-                mCardviewShareCinedayCode.setVisibility(View.VISIBLE);
+            // Shared - awesome
+            if (CRDSharedPreferences.getInstance(this).isCinedayCodeGivenToday()) {
+                mCardviewSharedCinedayCode.setVisibility(View.VISIBLE);
             } else {
-                // Cineday Code
-                mCardviewCinedayCode.setVisibility(View.GONE);
-
-                // Share code
-                mCardviewShareCinedayCode.setVisibility(View.GONE);
-
-                // Shared - awesome
-                if (CRDSharedPreferences.getInstance(this).isCinedayCodeGivenToday()) {
-                    mCardviewSharedCinedayCode.setVisibility(View.VISIBLE);
-                } else {
-                    mCardviewSharedCinedayCode.setVisibility(View.GONE);
-                }
-
-                String error = CRDSharedPreferences.getInstance(this).getTodayError();
-
-                // Status
-                if (error != null && CRDUtils.isTodayTuesday()) {
-                    mButtonStatusRetry.setVisibility(View.VISIBLE);
-                    mImageViewStatus.setImageResource(R.drawable.ic_error_outline_white_36dp);
-                    mTextViewStatusTitle.setText(R.string.main_dashboard_status_unknown_error);
-                    mTextViewStatusMessage.setText(error);
-                } else if (CRDSharedPreferences.getInstance(this).isSmsSentLessThan1HourAgo()) {
-                    mTextViewStatusTitle.setText(R.string.main_dashboard_status_waiting_for_orange);
-                    mTextViewStatusMessage.setText(R.string.main_dashboard_status_waiting_for_orange_message);
-                } else {
-                    String howMuchTimeUntilSmsSending = CRDUtils.secondsToHumanReadableCountDown(this, (int) (CRDUtils.getMillisUntilNextTuesdayMorning() / 1_000));
-
-                    mTextViewStatusTitle.setText(R.string.main_dashboard_status_scheduled);
-                    mTextViewStatusMessage.setText(getString(R.string.main_dashboard_status_scheduled_message, howMuchTimeUntilSmsSending));
-                }
+                mCardviewSharedCinedayCode.setVisibility(View.GONE);
             }
+
+            String error = CRDSharedPreferences.getInstance(this).getTodayError();
+
+            // Status
+            if (error != null && CRDUtils.isTodayTuesday()) {
+                mButtonStatusRetry.setVisibility(View.VISIBLE);
+                mImageViewStatus.setImageResource(R.drawable.ic_error_outline_white_36dp);
+                mTextViewStatusTitle.setText(R.string.main_dashboard_status_unknown_error);
+                mTextViewStatusMessage.setText(error);
+            } else if (CRDSharedPreferences.getInstance(this).isSmsSentLessThan1HourAgo()) {
+                mTextViewStatusTitle.setText(R.string.main_dashboard_status_waiting_for_orange);
+                mTextViewStatusMessage.setText(R.string.main_dashboard_status_waiting_for_orange_message);
+            }
+        }
+
+        // Telephone carrier
+        TelephonyManager telephonyManager = (TelephonyManager) getBaseContext().getSystemService(Context.TELEPHONY_SERVICE);
+        String carrierName = telephonyManager.getNetworkOperatorName();
+
+        if ("Orange F".equalsIgnoreCase(carrierName)) {
+            mCardviewWrongCarrier.setVisibility(View.GONE);
+        } else {
+            mCardviewWrongCarrier.setVisibility(View.VISIBLE);
         }
 
         if (CRDUtils.isTodayTuesday()

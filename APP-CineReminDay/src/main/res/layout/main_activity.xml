@@ -489,6 +489,67 @@
                         android:text="@string/main_dashboard_ask_code_button"/>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/main_dashboard_item_cv_wrong_carrier"
+                style="@style/CardView.Dark"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/main_dashboard_item_wrong_carrier_iv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:layout_margin="8dp"
+                        android:contentDescription="@string/accessibility_cineday_code"
+                        android:src="@drawable/ic_error_outline_white_48dp"/>
+
+                    <View
+                        android:id="@+id/main_dashboard_item_wrong_carrier_separator"
+                        android:layout_width="1dp"
+                        android:layout_height="0dp"
+                        android:layout_alignBottom="@+id/main_dashboard_item_wrong_carrier_ll_text"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_toEndOf="@id/main_dashboard_item_wrong_carrier_iv"
+                        android:background="@color/divider"/>
+
+                    <LinearLayout
+                        android:id="@+id/main_dashboard_item_wrong_carrier_ll_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toEndOf="@id/main_dashboard_item_wrong_carrier_separator"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:layout_marginTop="8dp"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="@string/main_dashboard_wrong_carrier"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:layout_marginStart="8dp"
+                            android:fontFamily="sans-serif-light"
+                            android:text="@string/main_dashboard_wrong_carrier_message"/>
+                    </LinearLayout>
+                </RelativeLayout>
+            </android.support.v7.widget.CardView>
         </LinearLayout>
     </ScrollView>
 
