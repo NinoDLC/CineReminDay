@@ -151,7 +151,7 @@ public class CRDUtils {
         if (hours >= 1) {
             result.append(hours).append(" ");
 
-            if (days == 1) {
+            if (hours == 1) {
                 result.append(context.getString(R.string.hour));
             } else {
                 result.append(context.getString(R.string.hours));
@@ -231,6 +231,10 @@ public class CRDUtils {
     }
 
     public static boolean isEpochBetweenTuesday8AMAndTuesdayEvening(long codeEpoch) {
+        if (codeEpoch < 0) {
+            return false;
+        }
+
         // Code is valid only between 0800 and 2359, on tuesday
         Calendar tuesdayMorning = Calendar.getInstance();
         tuesdayMorning.setTimeInMillis(CRDTimeManager.getEpoch());
@@ -285,6 +289,10 @@ public class CRDUtils {
     }
 
     public static boolean isEpochBetweenTuesdayMorningAndNextTuesdayMorning(long codeEpoch) {
+        if (codeEpoch < 0) {
+            return false;
+        }
+
         Calendar tuesdayMorning = Calendar.getInstance();
         tuesdayMorning.setTimeInMillis(CRDTimeManager.getEpoch());
         tuesdayMorning.setFirstDayOfWeek(Calendar.WEDNESDAY);
