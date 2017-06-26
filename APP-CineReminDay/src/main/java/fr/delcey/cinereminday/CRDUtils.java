@@ -46,7 +46,8 @@ public class CRDUtils {
                 && CRDUtils.isSmsPermissionOK(context)
                 && !CRDSharedPreferences.getInstance(context).isSmsSentToday()
                 && !CRDSharedPreferences.getInstance(context).isCinedayCodeValid()
-                && !CRDSharedPreferences.getInstance(context).shouldCancelNextSmsSending()) {
+                && !CRDSharedPreferences.getInstance(context).shouldCancelNextSmsSending()
+                && !CRDSharedPreferences.getInstance(context).isCinedayCodeGivenToday()) {
             CRDAlarmReceiver.sendSms(context);
         }
 

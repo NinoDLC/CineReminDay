@@ -6,17 +6,15 @@ package fr.delcey.cinereminday.cloud_manager.beans;
 
 public class CinedayCode {
     private String mCode;
-    private long mTimestamp;
     private boolean mAvailable;
 
-    public CinedayCode() {
+    public CinedayCode() { // Needed for Firebase deserialization
 
     }
 
-    public CinedayCode(String code, long timestamp, boolean available) {
-        this.mTimestamp = timestamp;
+    public CinedayCode(String code) {
         this.mCode = code;
-        this.mAvailable = available;
+        this.mAvailable = true;
     }
 
     public String getCode() {
@@ -27,19 +25,19 @@ public class CinedayCode {
         mCode = code;
     }
 
-    public long getTimestamp() {
-        return mTimestamp;
-    }
-
-    public void setTimestamp(long timestamp) {
-        mTimestamp = timestamp;
-    }
-
     public boolean isAvailable() {
         return mAvailable;
     }
 
     public void setAvailable(boolean available) {
         mAvailable = available;
+    }
+
+    @Override
+    public String toString() {
+        return "CinedayCode{" +
+                "code='" + mCode + '\'' +
+                ", available=" + mAvailable +
+                '}';
     }
 }

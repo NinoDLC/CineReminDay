@@ -35,6 +35,10 @@
     <string name="main_dashboard_cineday_code">Code Cinéday :</string>
     <string name="main_dashboard_cineday_code_note">Valable aujourd\'hui uniquement !</string>
 
+    <!-- Thank sharing user -->
+    <string name="main_dashboard_you_are_awesome">Un énorme merci !</string>
+    <string name="main_dashboard_you_are_awesome_message">De la part de l\'inconnu que vous allez rendre heureux, merci de partager votre code Cinéday ! Que le karma soit bon pour vous aujourd\'hui ☺</string>
+
     <!-- Cineday code sharing with community / friend cardview -->
     <string name="main_dashboard_share_cineday_code">Partager son code Cineday :</string>
     <string name="main_dashboard_share_cineday_code_message">Vous n\'allez pas au cinéma ce soir ? Faites un heureux et partagez votre code. C\'est la BA du jour !</string>
@@ -46,6 +50,7 @@
     <string name="main_dashboard_ask_code_cineday_code">Besoin d\'un code Cinéday aujourd\'hui ?</string>
     <string name="main_dashboard_ask_code_cineday_code_message">Demandez à la communauté de partager un code avec vous !</string>
     <string name="main_dashboard_ask_code_button">Demander un code</string>
+    <string name="no_available_cineday_code">Aucun code Cinéday disponible. Rééssayez plus tard.</string>
 
     <!-- Time convert -->
     <string name="less_than_a_minute">moins d\'une minute</string>
