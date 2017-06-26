@@ -52,6 +52,10 @@
     <string name="main_dashboard_ask_code_button">Demander un code</string>
     <string name="no_available_cineday_code">Aucun code Cinéday disponible. Rééssayez plus tard.</string>
 
+    <!-- Cineday ask code to community cardview -->
+    <string name="main_dashboard_wrong_carrier">Vous n\'êtes pas sur un réseau Orange</string>
+    <string name="main_dashboard_wrong_carrier_message">L\'offre Cinéday d\'Orange ne fonctionne que si vous êtes un client Orange. Vous semblez être chez un autre opérateur, la demande de code auprès d\'Orange risque de ne pas fonctionner.\nPS : vous pourrez toujours demander un code à la communauté !</string>
+
     <!-- Time convert -->
     <string name="less_than_a_minute">moins d\'une minute</string>
     <string name="hour">heure</string>

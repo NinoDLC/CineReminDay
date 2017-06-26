@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.CardView;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -66,6 +67,9 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
     // Broadcast receiver about time
     private BroadcastReceiver mTimeTickingBroadcastReceiver;
     private BroadcastReceiver mTimeChangedBroadcastReceiver;
+
+    // Telephone carrier
+    private CardView mCardviewWrongCarrier;
 
     // Code cloud manager
     private CRDCloudCodeManager mCinedayCodeManager;
@@ -142,6 +146,9 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
                 onAskCinedayCodeFirebaseButtonClicked();
             }
         });
+
+        // Telephone carrier
+        mCardviewWrongCarrier = (CardView) findViewById(R.id.main_dashboard_item_cv_wrong_carrier);
 
         mCinedayCodeManager = new CRDCloudCodeManager();
     }
@@ -242,6 +249,16 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
                     mTextViewStatusMessage.setText(getString(R.string.main_dashboard_status_scheduled_message, howMuchTimeUntilSmsSending));
                 }
             }
+        }
+
+        // Telephone carrier
+        TelephonyManager telephonyManager = (TelephonyManager) getBaseContext().getSystemService(Context.TELEPHONY_SERVICE);
+        String carrierName = telephonyManager.getNetworkOperatorName();
+
+        if ("Orange F".equalsIgnoreCase(carrierName)) {
+            mCardviewWrongCarrier.setVisibility(View.GONE);
+        } else {
+            mCardviewWrongCarrier.setVisibility(View.VISIBLE);
         }
 
         if (CRDUtils.isTodayTuesday()
