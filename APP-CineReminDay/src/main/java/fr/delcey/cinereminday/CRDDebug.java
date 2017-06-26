@@ -96,7 +96,9 @@ public class CRDDebug {
         }).addFunction(new DebugFunction("Cineday code received") {
             @Override
             public String call() throws Exception {
-                timeTravelToTuesdayMorning();
+                Calendar calendar = CRDUtils.getTrueTimeTuesdayCalendar();
+
+                CRDTimeManager.setEpoch(calendar.getTimeInMillis());
 
                 StringBuilder cinedayCode = new StringBuilder(8);
 
