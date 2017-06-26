@@ -1,5 +1,6 @@
-package fr.delcey.cinereminday.cloud_manager;
+package fr.delcey.cinereminday.cloud_code_manager;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -13,7 +14,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Random;
 
-import fr.delcey.cinereminday.cloud_manager.beans.CinedayCode;
+import fr.delcey.cinereminday.cloud_code_manager.beans.CinedayCode;
+import fr.delcey.cinereminday.local_code_manager.CRDSharedPreferences;
 import fr.delcey.cinereminday.main.CRDMainActivity;
 
 /**
@@ -24,7 +26,7 @@ public class CRDCloudCodeManager {
     private boolean mIsSharingCode;
     private boolean mIsQueryingCode;
 
-    public void shareCinedayCode(String cinedayCodeToShare, final OnCodeSharedCallback callback) {
+    public void shareCinedayCode(final Context context, String cinedayCodeToShare, final OnCodeSharedCallback callback) {
         if (!mIsSharingCode) {
             mIsSharingCode = true;
 
@@ -36,6 +38,10 @@ public class CRDCloudCodeManager {
                     Log.d(CRDCloudCodeManager.class.getName(), "shareCinedayCode.onDataChange() called with: " + "dataSnapshot = [" + dataSnapshot + "]");
 
                     mIsSharingCode = false;
+
+                    CRDSharedPreferences.getInstance(context).setCinedayCode(null);
+                    CRDSharedPreferences.getInstance(context).setCinedayCodeGivenEpoch();
+                    CRDSharedPreferences.getInstance(context).setCinedayCodeToShare(null);
 
                     callback.onCodeShared();
                 }
@@ -52,7 +58,7 @@ public class CRDCloudCodeManager {
         }
     }
 
-    public void queryCinedayCode(final OnCodeQueriedCallback callback) {
+    public void queryCinedayCode(final Context context, final OnCodeQueriedCallback callback) {
         if (!mIsQueryingCode) {
             mIsQueryingCode = true;
 
@@ -78,7 +84,9 @@ public class CRDCloudCodeManager {
 
                                                 mIsQueryingCode = false;
 
-                                                callback.onCodeQueried(code.getCode());
+                                                CRDSharedPreferences.getInstance(context).setCinedayCode(code.getCode());
+
+                                                callback.onCodeQueried();
                                             }
                                         })
                                         .addOnFailureListener(new OnFailureListener() {
@@ -125,7 +133,7 @@ public class CRDCloudCodeManager {
     }
 
     public interface OnCodeQueriedCallback {
-        void onCodeQueried(String cinedayCode);
+        void onCodeQueried();
 
         void onCodeQueryingResultEmpty();
 

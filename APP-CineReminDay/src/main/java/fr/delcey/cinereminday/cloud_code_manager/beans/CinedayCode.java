@@ -1,4 +1,4 @@
-package fr.delcey.cinereminday.cloud_manager.beans;
+package fr.delcey.cinereminday.cloud_code_manager.beans;
 
 /**
  * Created by Nino on 15/03/2017.
