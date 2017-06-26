@@ -259,10 +259,7 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
     }
 
     private void onVisitStorePageButtonClicked() {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        String playStoreLink = String.format(getString(R.string.open_playstore), getApplicationContext().getPackageName());
-        intent.setData(Uri.parse(playStoreLink));
-        startActivity(intent);
+        CRDUtils.redirectToStore(this);
     }
 
     private void onAskSmsPermissionButtonClicked() {

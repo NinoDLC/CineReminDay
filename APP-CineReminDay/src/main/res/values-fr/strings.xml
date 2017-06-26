@@ -61,4 +61,7 @@
     <string name="minute">minute</string>
     <string name="minutes">minutes</string>
     <string name="and">et</string>
+
+    <!-- Debug -->
+    <string name="open_debug_menu">Ouvrir le menu debug</string>
 </resources>

@@ -7,6 +7,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -312,5 +313,12 @@ public class CRDUtils {
         long nextTuesdayMorningEpoch = nextTuesdayMorning.getTimeInMillis();
 
         return CRDUtils.isEpochBetween(codeEpoch, tuesdayMorningEpoch, nextTuesdayMorningEpoch);
+    }
+
+    public static void redirectToStore(@NonNull Context context) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        String playStoreLink = String.format("market://details?id=%s", context.getApplicationContext().getPackageName());
+        intent.setData(Uri.parse(playStoreLink));
+        context.startActivity(intent);
     }
 }
