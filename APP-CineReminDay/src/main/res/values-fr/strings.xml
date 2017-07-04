@@ -57,6 +57,7 @@
     <string name="main_dashboard_wrong_carrier_message">L\'offre Cinéday d\'Orange ne fonctionne que si vous êtes un client Orange. Vous semblez être chez un autre opérateur, la demande de code auprès d\'Orange risque de ne pas fonctionner.\nPS : vous pourrez toujours demander un code à la communauté !</string>
 
     <!-- Time convert -->
+    <string name="unknown_amount_of_time">un temps inconnu</string>
     <string name="less_than_a_minute">moins d\'une minute</string>
     <string name="hour">heure</string>
     <string name="hours">heures</string>

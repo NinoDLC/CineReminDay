@@ -7,15 +7,12 @@ import android.content.Intent;
 import fr.delcey.cinereminday.local_code_manager.CRDTimeManager;
 
 /**
- * Created by Nino on 09/03/2017.
+ * Created by Nino on 04/07/2017.
  */
 
-public class CRDBootReceiver extends BroadcastReceiver {
+public class CRDTimeChangedReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        // Alarms won't resist a reboot
-        if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
-            CRDTimeManager.scheduleWeeklyAlarm(context);
-        }
+        CRDTimeManager.scheduleWeeklyAlarm(context);
     }
 }

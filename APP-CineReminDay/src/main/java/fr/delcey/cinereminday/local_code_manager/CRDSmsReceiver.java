@@ -1,4 +1,4 @@
-package fr.delcey.cinereminday.local_manager;
+package fr.delcey.cinereminday.local_code_manager;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -6,11 +6,9 @@ import android.content.Intent;
 import android.provider.Telephony;
 import android.telephony.SmsMessage;
 
-import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import fr.delcey.cinereminday.CRDTimeManager;
 import fr.delcey.cinereminday.CRDUtils;
 
 /**
@@ -41,9 +39,7 @@ public class CRDSmsReceiver extends BroadcastReceiver {
         if (fromOrange) {
             Matcher matcher = CINEDAY_CODE_PATTERN.matcher(smsBuilder.toString());
 
-            if (matcher.matches()) {
-                CRDSharedPreferences.getInstance(context).clear();
-
+            if (matcher.find()) {
                 String cinedayCode = matcher.group();
 
                 // We save it in local
@@ -51,10 +47,8 @@ public class CRDSmsReceiver extends BroadcastReceiver {
 
                 // Don't spy on our beloved users !
                 CRDUtils.toggleSmsReceiver(context, false);
-
-                CRDUtils.scheduleWeeklyAlarm(context);
             } else {
-                CRDSharedPreferences.getInstance(context).setError(smsBuilder.toString());
+                CRDSharedPreferences.getInstance(context).setSmsError(smsBuilder.toString());
             }
         }
     }

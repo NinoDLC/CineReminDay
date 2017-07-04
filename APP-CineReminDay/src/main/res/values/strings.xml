@@ -57,6 +57,7 @@
     <string name="main_dashboard_wrong_carrier_message">The Orange Cineday offer is only available for Orange customers. It seems you are on another network carrier and the code retrieval may not work.\nPS : don\'t worry, you\'ll still be able to ask a code to the community !</string>
 
     <!-- Time convert -->
+    <string name="unknown_amount_of_time">an unknown amount of time</string>
     <string name="less_than_a_minute">less than a minute</string>
     <string name="hour">hour</string>
     <string name="hours">hours</string>

@@ -7,7 +7,8 @@
     <uses-permission android:name="android.permission.RECEIVE_SMS"/>
 
     <application
-        android:allowBackup="true"
+        android:name=".CRDApp"
+        android:allowBackup="false"
         android:icon="@drawable/app_icon"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
@@ -18,14 +19,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".cloud_manager.CRDCodesActivity"/>
-
-        <service
-            android:name=".sms_scheduler.CRDSmsJobSchedulerService"
-            android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
-
-        <receiver android:name=".local_manager.CRDSmsReceiver">
+        <receiver android:name=".local_code_manager.CRDSmsReceiver">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
             </intent-filter>
@@ -33,6 +27,16 @@
 
         <receiver
             android:name=".sms_scheduler.CRDAlarmReceiver"/>
+
+        <receiver
+            android:name=".sms_scheduler.CRDTimeChangedReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.DATE_CHANGED"/>
+                <action android:name="android.intent.action.TIME_SET"/>
+                <action android:name="android.intent.action.TIMEZONE_CHANGED"/>
+            </intent-filter>
+        </receiver>
+
 
         <receiver
             android:name=".sms_scheduler.CRDBootReceiver">

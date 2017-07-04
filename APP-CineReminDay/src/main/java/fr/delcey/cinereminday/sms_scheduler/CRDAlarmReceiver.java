@@ -9,7 +9,8 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import fr.delcey.cinereminday.CRDUtils;
-import fr.delcey.cinereminday.local_manager.CRDSharedPreferences;
+import fr.delcey.cinereminday.local_code_manager.CRDSharedPreferences;
+import fr.delcey.cinereminday.local_code_manager.CRDTimeManager;
 
 import static android.content.Context.TELEPHONY_SERVICE;
 
@@ -21,17 +22,30 @@ public class CRDAlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        sendSms(context);
+        Log.v(CRDAlarmReceiver.class.getName(), "DRING DRING MOTHAFUCKA !");
+
+        CRDSharedPreferences.getInstance(context).setLastAlarmTriggeredEpoch();
+
+        if (CRDUtils.isSmsPermissionOK(context)
+                && CRDTimeManager.isTodayTuesdayBetweeenMorningAndEvening()
+                && !CRDTimeManager.isSmsSentToday(context)
+                && !CRDTimeManager.isCinedayCodeValid(context)
+                && !CRDTimeManager.shouldCancelNextSmsSending(context)
+                && !CRDTimeManager.isCinedayCodeGivenToday(context)) {
+            sendSms(context);
+        } else {
+            // TODO VOLKO LOG SOME STUFF, MAYBE NOTIF IN SOME CASES ?
+        }
 
         // Schedule the next week's alarm !
         // We can't use setRepeating because it won't wake up doze on API 19+
-        CRDUtils.scheduleWeeklyAlarm(context);
+        CRDTimeManager.scheduleNextWeekAlarm(context);
     }
 
     public static void sendSms(final Context context) {
         Log.v(CRDAlarmReceiver.class.getName(), "sendSms() => Sending SMS...");
 
-        CRDSharedPreferences.getInstance(context).setSmsSendingTimestamp();
+        CRDSharedPreferences.getInstance(context).setSendingSmsEpoch();
 
         final TelephonyManager telephonyManager = (TelephonyManager) context.getApplicationContext().getSystemService(TELEPHONY_SERVICE);
         final PhoneStateListener phoneStateListener = new PhoneStateListener() {
@@ -49,7 +63,7 @@ public class CRDAlarmReceiver extends BroadcastReceiver {
                     case ServiceState.STATE_OUT_OF_SERVICE:
                         serviceStateDebug = "OUT_OF_SERVICE";
                         break;
-                    case ServiceState.STATE_EMERGENCY_ONLY :
+                    case ServiceState.STATE_EMERGENCY_ONLY:
                         serviceStateDebug = "EMERGENCY_ONLY";
                         break;
                     case ServiceState.STATE_POWER_OFF:
@@ -60,7 +74,7 @@ public class CRDAlarmReceiver extends BroadcastReceiver {
                         break;
                 }
 
-                Log.v(CRDAlarmReceiver.class.getName(), "onServiceStateChanged() => " + "serviceState = [" + serviceStateDebug +"]");
+                Log.v(CRDAlarmReceiver.class.getName(), "onServiceStateChanged() => " + "serviceState = [" + serviceStateDebug + "]");
 
                 if (serviceState.getState() == ServiceState.STATE_IN_SERVICE) {
                     CRDUtils.sendSmsToOrange(context);
