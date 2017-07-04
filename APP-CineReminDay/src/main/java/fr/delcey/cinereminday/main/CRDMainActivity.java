@@ -68,8 +68,7 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
     // Telephone carrier
     private CardView mCardviewWrongCarrier;
 
-    // Broadcast receiver about time
-    private BroadcastReceiver mTimeTickingBroadcastReceiver;
+    // Broadcast receiver about time changing
     private BroadcastReceiver mTimeChangedBroadcastReceiver;
 
     // Code cloud manager
@@ -309,15 +308,6 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
     public void onStart() {
         super.onStart();
 
-        mTimeTickingBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (intent.getAction().equals(Intent.ACTION_TIME_TICK)) {
-                    manageCardviews();
-                }
-            }
-        };
-
         mTimeChangedBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -325,8 +315,13 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
             }
         };
 
-        registerReceiver(mTimeTickingBroadcastReceiver, new IntentFilter(Intent.ACTION_TIME_TICK));
-        registerReceiver(mTimeChangedBroadcastReceiver, new IntentFilter(Intent.ACTION_TIME_CHANGED));
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Intent.ACTION_TIME_TICK);
+        intentFilter.addAction(Intent.ACTION_TIME_CHANGED); // Hour and minute manually set (not through tick)
+        intentFilter.addAction(Intent.ACTION_TIMEZONE_CHANGED); // Timezone changed
+        intentFilter.addAction(Intent.ACTION_DATE_CHANGED); // Date manually set (not through tick)
+
+        registerReceiver(mTimeChangedBroadcastReceiver, intentFilter);
     }
 
     @Override
@@ -358,10 +353,6 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
     @Override
     public void onStop() {
         super.onStop();
-
-        if (mTimeTickingBroadcastReceiver != null) {
-            unregisterReceiver(mTimeTickingBroadcastReceiver);
-        }
 
         if (mTimeChangedBroadcastReceiver != null) {
             unregisterReceiver(mTimeChangedBroadcastReceiver);

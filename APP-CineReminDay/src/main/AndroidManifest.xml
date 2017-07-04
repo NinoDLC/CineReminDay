@@ -19,13 +19,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".cloud_manager.CRDCodesActivity"/>
-
-        <service
-            android:name=".sms_scheduler.CRDSmsJobSchedulerService"
-            android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
-
         <receiver android:name=".local_code_manager.CRDSmsReceiver">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
