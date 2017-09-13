@@ -49,8 +49,11 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
     private TextView mTextViewStatusTitle;
     private TextView mTextViewStatusMessage;
 
-    // Permission
+    // Android SMS Permission
     private CardView mCardviewSmsPermission;
+
+    // Human okay-ness with scheduling a SMS sending
+    private CardView mCardviewSmsSchedulePermission;
 
     // Code
     private CardView mCardviewCinedayCode;
@@ -103,13 +106,23 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
         mTextViewStatusTitle = (TextView) findViewById(R.id.main_dashboard_item_status_tv_title);
         mTextViewStatusMessage = (TextView) findViewById(R.id.main_dashboard_item_status_tv_message);
 
-        // Permission
+        // Android Permission
         mCardviewSmsPermission = (CardView) findViewById(R.id.main_dashboard_item_cv_permission);
         Button buttonSmsPermissionGrant = (Button) findViewById(R.id.main_dashboard_item_permission_btn_grant_permission);
         buttonSmsPermissionGrant.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onAskSmsPermissionButtonClicked();
+            }
+        });
+
+        // SMS Schedule permission
+        mCardviewSmsSchedulePermission = (CardView) findViewById(R.id.main_dashboard_item_cv_confirm_message);
+        Button buttonSmsSchedulePermissionOk = (Button) findViewById(R.id.main_dashboard_item_confirm_message_btn_ok);
+        buttonSmsSchedulePermissionOk.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onScheduleSmsButtonClicked();
             }
         });
 
@@ -179,14 +192,29 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
         mButtonStatusRetry.setVisibility(View.GONE);
         mButtonStatusStore.setVisibility(View.GONE);
 
+        // Android permissions
         if (!CRDUtils.isSmsPermissionOK(this)) {
             // Status
             mImageViewStatus.setImageResource(R.drawable.ic_error_outline_white_36dp);
             mTextViewStatusTitle.setText(R.string.main_dashboard_status_error_permission_missing);
             mTextViewStatusMessage.setText(R.string.main_dashboard_status_error_permission_missing_message);
 
-            // Permission
+            // Android Permission
             mCardviewSmsPermission.setVisibility(View.VISIBLE);
+
+            // Human permission to send SMS
+            mCardviewSmsSchedulePermission.setVisibility(View.GONE);
+        } else if (!CRDSharedPreferences.getInstance(this).isUserOkWithSmsSending()) { // Then human permission to schedule an SMS (because of Google Play policies)
+            // Status
+            mImageViewStatus.setImageResource(R.drawable.ic_error_outline_white_36dp);
+            mTextViewStatusTitle.setText(R.string.main_dashboard_status_error_review_sms_message);
+            mTextViewStatusMessage.setText(R.string.main_dashboard_status_error_review_sms_message_message);
+
+            // Android Permission
+            mCardviewSmsPermission.setVisibility(View.GONE);
+
+            // Human permission to send SMS
+            mCardviewSmsSchedulePermission.setVisibility(View.VISIBLE);
         } else {
             Integer secondsBeforeNextAlarm = CRDTimeManager.getSecondsBeforeNextAlarm(this);
 
@@ -199,6 +227,9 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
 
             // Permission
             mCardviewSmsPermission.setVisibility(View.GONE);
+
+            // Human permission to send SMS
+            mCardviewSmsSchedulePermission.setVisibility(View.GONE);
         }
 
         if (CRDTimeManager.isCinedayCodeValid(this)) {
@@ -275,6 +306,12 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
         ActivityCompat.requestPermissions(CRDMainActivity.this, new String[]{Manifest.permission.SEND_SMS, Manifest.permission.RECEIVE_SMS}, CRDConstants.REQUEST_CODE_SMS_PERMISSIONS);
     }
 
+    private void onScheduleSmsButtonClicked() {
+        CRDSharedPreferences.getInstance(this).setUserOkWithSmsSending(true);
+
+        CRDTimeManager.scheduleWeeklyAlarm(this);
+    }
+
     private void onShareCinedayCodeCommunityButtonClicked() {
         String cinedayCode = CRDSharedPreferences.getInstance(this).getCinedayCode();
 
@@ -329,6 +366,7 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
         super.onResume();
 
         CRDSharedPreferences.getInstance(this).addOnSharedPreferenceListener(this,
+                CRDSharedPreferences.IS_USER_OK_WITH_SMS_SENDING,
                 CRDSharedPreferences.SHARED_PREF_KEY_CINEDAY,
                 CRDSharedPreferences.SHARED_PREF_KEY_CINEDAY_EPOCH,
                 CRDSharedPreferences.SHARED_PREF_KEY_SCHEDULED_ALARM_EPOCH,
@@ -336,7 +374,8 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
                 CRDSharedPreferences.SHARED_PREF_KEY_SMS_ERROR,
                 CRDSharedPreferences.SHARED_PREF_KEY_CINEDAY_CODE_GIVEN_EPOCH);
 
-        if (CRDUtils.isSmsPermissionOK(this)) {
+        if (CRDUtils.isSmsPermissionOK(this)
+                && CRDSharedPreferences.getInstance(this).isUserOkWithSmsSending()) {
             CRDTimeManager.scheduleWeeklyAlarm(this);
         }
 
@@ -377,8 +416,6 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
                     break;
                 }
             }
-
-            CRDTimeManager.scheduleWeeklyAlarm(CRDMainActivity.this);
 
             // TODO VOLKO WHY NOT A NICE LITTLE ANIMATION ? :)
             manageCardviews();

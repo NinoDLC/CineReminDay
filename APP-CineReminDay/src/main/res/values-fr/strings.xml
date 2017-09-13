@@ -8,6 +8,7 @@
     <string name="accessibility_schedule_state">État de la programmation</string>
     <string name="accessibility_permission">Permission</string>
     <string name="accessibility_permission_state">État des permissions</string>
+    <string name="accessibility_confirm_message_sending">Confirmer l\'envoi du message</string>
     <string name="accessibility_cineday_code">Code Cinéday</string>
     <string name="accessibility_share_code">Partage du code Cinéday</string>
     <string name="accessibility_ask_code">Demande d\'un code Cinéday</string>
@@ -15,6 +16,8 @@
     <!-- Status cardview -->
     <string name="main_dashboard_status_error_permission_missing">État : Demande de permission</string>
     <string name="main_dashboard_status_error_permission_missing_message">Besoin de la permission pour envoyer un SMS.</string>
+    <string name="main_dashboard_status_error_review_sms_message">État : Confirmez le contenu du SMS</string>
+    <string name="main_dashboard_status_error_review_sms_message_message">Approuvez le contenu du message programmé pour finir la configuration de l\'app !</string>
     <string name="main_dashboard_status_scheduled">État : Programmé</string>
     <string name="main_dashboard_status_scheduled_message">Tout est bon, le code sera récupéré dans %s.</string>
     <string name="main_dashboard_status_waiting_for_orange">État : En attente d\'Orange</string>
@@ -30,6 +33,11 @@
     <string name="main_dashboard_sms_permission">Permission SMS :</string>
     <string name="main_dashboard_sms_permission_message">Je dois pouvoir envoyer un SMS au service Cinéday d\'Orange pour récupérer le code. Un SMS / semaine. Prix d\'un SMS normal.</string>
     <string name="main_dashboard_sms_permission_button">Donner la permission</string>
+
+    <!-- SMS content confirmation -->
+    <string name="main_dashboard_message_to_orange">Message à envoyer</string>
+    <string name="main_dashboard_message_to_orange_content">Un SMS va être envoyé mardi matin pour récupérer votre code. Veuillez confirmer le contenu du message.\n\n-------\nÀ : <b>20 000</b> (Orange)\n-------\nMessage : <b>cine</b>\n-------\n\nAcceptez vous l\'envoi de ce message programmé ? (Prix d\'un SMS normal, pas de coût supplémentaire)</string>
+    <string name="main_dashboard_message_to_orange_i_accept">J\'accepte</string>
 
     <!-- Cineday code cardview -->
     <string name="main_dashboard_cineday_code">Code Cinéday :</string>

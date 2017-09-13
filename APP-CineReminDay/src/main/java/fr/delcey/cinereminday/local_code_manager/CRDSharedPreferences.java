@@ -19,6 +19,7 @@ public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenc
     private static final String SHARED_PREF_KEY_SMS_ERROR_EPOCH = "SMS_ERROR_EPOCH";
 
     // Public keys to listen to events on theses
+    public static final String IS_USER_OK_WITH_SMS_SENDING = "SMS_OK";
     public static final String SHARED_PREF_KEY_CINEDAY = "CINEDAY";
     public static final String SHARED_PREF_KEY_CINEDAY_EPOCH = "CINEDAY_EPOCH"; // Only for debug, if we get the same code twice on different days, it won't call onSharedPreferenceChanged because code is the same
     public static final String SHARED_PREF_KEY_CINEDAY_TO_SHARE = "CINEDAY_TO_SHARE";
@@ -57,6 +58,16 @@ public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenc
      */
     public void clear() {
         mSharedPreferences.edit().clear().apply();
+    }
+
+    public void setUserOkWithSmsSending(boolean ok) {
+        mSharedPreferences.edit()
+                .putBoolean(IS_USER_OK_WITH_SMS_SENDING, ok)
+                .apply();
+    }
+
+    public boolean isUserOkWithSmsSending() {
+        return mSharedPreferences.getBoolean(IS_USER_OK_WITH_SMS_SENDING, false);
     }
 
     public void setCinedayCode(@Nullable String cinedayCode) {
