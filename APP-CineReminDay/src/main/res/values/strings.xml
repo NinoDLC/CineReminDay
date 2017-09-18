@@ -8,6 +8,7 @@
     <string name="accessibility_schedule_state">Schedule state</string>
     <string name="accessibility_permission">Permission</string>
     <string name="accessibility_permission_state">Permission state</string>
+    <string name="accessibility_confirm_message_sending">Confirm message sending</string>
     <string name="accessibility_cineday_code">Cineday code</string>
     <string name="accessibility_share_code">Share code</string>
     <string name="accessibility_ask_code">Ask code</string>
@@ -15,6 +16,8 @@
     <!-- Status cardview -->
     <string name="main_dashboard_status_error_permission_missing">Status : Need permission</string>
     <string name="main_dashboard_status_error_permission_missing_message">Need SMS sending permission.</string>
+    <string name="main_dashboard_status_error_review_sms_message">Status : Review SMS message</string>
+    <string name="main_dashboard_status_error_review_sms_message_message">Please review and accept the content and time of the SMS sending. </string>
     <string name="main_dashboard_status_scheduled">Status : Scheduled</string>
     <string name="main_dashboard_status_scheduled_message">All set, code will be retrieved in %s.</string>
     <string name="main_dashboard_status_waiting_for_orange">Status : Waiting for Orange</string>
@@ -30,6 +33,11 @@
     <string name="main_dashboard_sms_permission">SMS Permission :</string>
     <string name="main_dashboard_sms_permission_message">I need to send one SMS to Orange Cineday service, on Tuesday morning, to retrieve the code. One SMS / week. No additionnal charge.</string>
     <string name="main_dashboard_sms_permission_button">Grant permission</string>
+
+    <!-- SMS content confirmation -->
+    <string name="main_dashboard_message_to_orange">Message to send</string>
+    <string name="main_dashboard_message_to_orange_content">A SMS will be sent on tuesday morning. You have to confirm your agreement before everything is set up !\n\n-------\nTo : <b>20 000</b> (Orange)\n-------\nContent : <b>cine</b>\n-------\n\nPlease confirm, no charge (except from standard SMS send)</string>
+    <string name="main_dashboard_message_to_orange_i_accept">I accept</string>
 
     <!-- Cineday code cardview -->
     <string name="main_dashboard_cineday_code">Cineday code :</string>
