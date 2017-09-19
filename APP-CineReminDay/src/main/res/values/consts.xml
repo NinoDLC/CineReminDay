@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="authorized_sim_operator">Orange F</string>
+    <string name="authorized_sim_operator" translatable="false">Orange F</string>
 </resources>
