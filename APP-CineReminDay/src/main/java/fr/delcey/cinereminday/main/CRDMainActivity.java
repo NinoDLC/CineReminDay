@@ -276,9 +276,9 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
 
         // Telephone carrier
         TelephonyManager telephonyManager = (TelephonyManager) getBaseContext().getSystemService(Context.TELEPHONY_SERVICE);
-        String carrierName = telephonyManager.getNetworkOperatorName();
+        String simOperatorName = telephonyManager.getSimOperatorName();
 
-        if ("Orange F".equalsIgnoreCase(carrierName)) {
+        if (getString(R.string.authorized_sim_operator).equalsIgnoreCase(simOperatorName)) {
             mCardviewWrongCarrier.setVisibility(View.GONE);
         } else {
             mCardviewWrongCarrier.setVisibility(View.VISIBLE);
@@ -327,10 +327,10 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
     }
 
     private void onShareCinedayCodeFriendButtonClicked() {
-        Uri smsUri = Uri.parse("smsto:");
-        Intent intent = new Intent(Intent.ACTION_SENDTO, smsUri);
-        intent.putExtra("sms_body", getString(R.string.sms_default_message, CRDSharedPreferences.getInstance(this).getCinedayCode()));
-        startActivity(intent);
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.sms_default_message, CRDSharedPreferences.getInstance(this).getCinedayCode()));
+        intent.setType("text/plain");
+        startActivity(Intent.createChooser(intent, getString(R.string.main_dashboard_share_cineday_code)));
     }
 
     private void onAskCinedayCodeFirebaseButtonClicked() {
