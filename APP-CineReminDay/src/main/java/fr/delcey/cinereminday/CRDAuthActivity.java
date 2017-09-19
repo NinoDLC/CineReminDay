@@ -94,6 +94,8 @@ public abstract class CRDAuthActivity extends AppCompatActivity implements Googl
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
                 logInToFirebaseWithGoogleSignIn(account);
+            } else {
+                Log.e(CRDAuthActivity.class.getName(), "onActivityResult().REQUEST_CODE_GOOGLE_SIGN_IN FAILED ! " + "getSignInResultFromIntent = [" + result.getStatus() + "]");
             }
         }
     }
