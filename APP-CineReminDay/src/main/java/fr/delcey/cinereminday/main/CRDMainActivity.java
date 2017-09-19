@@ -276,9 +276,9 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
 
         // Telephone carrier
         TelephonyManager telephonyManager = (TelephonyManager) getBaseContext().getSystemService(Context.TELEPHONY_SERVICE);
-        String carrierName = telephonyManager.getNetworkOperatorName();
+        String simOperatorName = telephonyManager.getSimOperatorName();
 
-        if ("Orange F".equalsIgnoreCase(carrierName)) {
+        if (getString(R.string.authorized_sim_operator).equalsIgnoreCase(simOperatorName)) {
             mCardviewWrongCarrier.setVisibility(View.GONE);
         } else {
             mCardviewWrongCarrier.setVisibility(View.VISIBLE);
