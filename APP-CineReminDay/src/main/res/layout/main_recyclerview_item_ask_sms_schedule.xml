@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_dashboard_item_cv_confirm_message"
+    style="@style/CardView.Dark"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+            <ImageView
+                android:id="@+id/main_dashboard_item_confirm_message_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:contentDescription="@string/accessibility_confirm_message_sending"
+                android:src="@drawable/ic_message_white_48dp"
+                />
+
+            <View
+                android:id="@+id/main_dashboard_item_confirm_message_separator"
+                android:layout_width="1dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_alignBottom="@+id/main_dashboard_item_confirm_message_ll_text"
+                android:layout_alignParentTop="true"
+                android:layout_toEndOf="@id/main_dashboard_item_confirm_message_iv"
+                android:background="@color/divider"
+                />
+
+            <LinearLayout
+                android:id="@+id/main_dashboard_item_confirm_message_ll_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/main_dashboard_item_confirm_message_separator"
+                android:orientation="vertical"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginStart="8dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="@string/main_dashboard_message_to_orange"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginStart="8dp"
+                    android:fontFamily="sans-serif-light"
+                    android:text="@string/main_dashboard_message_to_orange_content"
+                    />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <Button
+            android:id="@+id/main_dashboard_item_confirm_message_btn_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/main_dashboard_message_to_orange_i_accept"
+            />
+    </LinearLayout>
+</android.support.v7.widget.CardView>
