@@ -1,7 +1,6 @@
 package fr.delcey.cinereminday;
 
 import android.app.Application;
-
 import com.jakewharton.threetenabp.AndroidThreeTen;
 
 /**
@@ -9,6 +8,7 @@ import com.jakewharton.threetenabp.AndroidThreeTen;
  */
 
 public class CRDApp extends Application {
+
     @Override
     public void onCreate() {
         super.onCreate();

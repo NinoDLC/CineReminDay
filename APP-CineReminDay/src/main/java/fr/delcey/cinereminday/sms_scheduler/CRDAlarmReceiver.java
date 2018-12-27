@@ -1,5 +1,7 @@
 package fr.delcey.cinereminday.sms_scheduler;
 
+import static android.content.Context.TELEPHONY_SERVICE;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -7,12 +9,9 @@ import android.telephony.PhoneStateListener;
 import android.telephony.ServiceState;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-
 import fr.delcey.cinereminday.CRDUtils;
 import fr.delcey.cinereminday.local_code_manager.CRDSharedPreferences;
 import fr.delcey.cinereminday.local_code_manager.CRDTimeManager;
-
-import static android.content.Context.TELEPHONY_SERVICE;
 
 /**
  * Created by Nino on 10/03/2017.
@@ -27,11 +26,11 @@ public class CRDAlarmReceiver extends BroadcastReceiver {
         CRDSharedPreferences.getInstance(context).setLastAlarmTriggeredEpoch();
 
         if (CRDUtils.isSmsPermissionOK(context)
-                && CRDTimeManager.isTodayTuesdayBetweeenMorningAndEvening()
-                && !CRDTimeManager.isSmsSentToday(context)
-                && !CRDTimeManager.isCinedayCodeValid(context)
-                && !CRDTimeManager.shouldCancelNextSmsSending(context)
-                && !CRDTimeManager.isCinedayCodeGivenToday(context)) {
+            && CRDTimeManager.isTodayTuesdayBetweeenMorningAndEvening()
+            && !CRDTimeManager.isSmsSentToday(context)
+            && !CRDTimeManager.isCinedayCodeValid(context)
+            && !CRDTimeManager.shouldCancelNextSmsSending(context)
+            && !CRDTimeManager.isCinedayCodeGivenToday(context)) {
             sendSms(context);
         } else {
             // TODO VOLKO LOG SOME STUFF, MAYBE NOTIF IN SOME CASES ?
@@ -47,7 +46,8 @@ public class CRDAlarmReceiver extends BroadcastReceiver {
 
         CRDSharedPreferences.getInstance(context).setSendingSmsEpoch();
 
-        final TelephonyManager telephonyManager = (TelephonyManager) context.getApplicationContext().getSystemService(TELEPHONY_SERVICE);
+        final TelephonyManager telephonyManager = (TelephonyManager) context.getApplicationContext()
+                                                                            .getSystemService(TELEPHONY_SERVICE);
         final PhoneStateListener phoneStateListener = new PhoneStateListener() {
             // Fired when the service state changes or immediately after registration via .listen()
             @Override
@@ -74,7 +74,8 @@ public class CRDAlarmReceiver extends BroadcastReceiver {
                         break;
                 }
 
-                Log.v(CRDAlarmReceiver.class.getName(), "onServiceStateChanged() => " + "serviceState = [" + serviceStateDebug + "]");
+                Log.v(CRDAlarmReceiver.class.getName(),
+                      "onServiceStateChanged() => " + "serviceState = [" + serviceStateDebug + "]");
 
                 if (serviceState.getState() == ServiceState.STATE_IN_SERVICE) {
                     CRDUtils.sendSmsToOrange(context);

@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -31,6 +30,7 @@ import com.google.firebase.auth.GoogleAuthProvider;
  * Created by Nino on 12/03/2017.
  */
 public abstract class CRDAuthActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+
     private boolean mFirebaseAuthentificated = false;
 
     private FirebaseAuth.AuthStateListener mFirebaseAuthListener;
@@ -66,14 +66,14 @@ public abstract class CRDAuthActivity extends AppCompatActivity implements Googl
      */
     private void initGoogleSignInAuth() {
         GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build();
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this, this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions)
-                .build();
+            .enableAutoManage(this, this)
+            .addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions)
+            .build();
     }
 
     @Override
@@ -95,7 +95,9 @@ public abstract class CRDAuthActivity extends AppCompatActivity implements Googl
                 GoogleSignInAccount account = result.getSignInAccount();
                 logInToFirebaseWithGoogleSignIn(account);
             } else {
-                Log.e(CRDAuthActivity.class.getName(), "onActivityResult().REQUEST_CODE_GOOGLE_SIGN_IN FAILED ! " + "getSignInResultFromIntent = [" + result.getStatus() + "]");
+                Log.e(CRDAuthActivity.class.getName(),
+                      "onActivityResult().REQUEST_CODE_GOOGLE_SIGN_IN FAILED ! " + "getSignInResultFromIntent = ["
+                          + result.getStatus() + "]");
             }
         }
     }
@@ -118,27 +120,32 @@ public abstract class CRDAuthActivity extends AppCompatActivity implements Googl
     }
 
     private void logInToFirebaseWithGoogleSignIn(GoogleSignInAccount googleSignInAccount) {
-        Log.v(CRDAuthActivity.class.getName(), "logInToFirebaseWithGoogleSignIn() called with: " + "googleSignInAccount = [" + googleSignInAccount + "]");
+        Log.v(CRDAuthActivity.class.getName(),
+              "logInToFirebaseWithGoogleSignIn() called with: " + "googleSignInAccount = [" + googleSignInAccount
+                  + "]");
 
         // TODO VOLKO MAKE USER WAIT
 
         AuthCredential credential = GoogleAuthProvider.getCredential(googleSignInAccount.getIdToken(), null);
 
         FirebaseAuth.getInstance()
-                .signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.v(CRDAuthActivity.class.getName(), "logInToFirebaseWithGoogleSignIn.onComplete() called with: " + "isSuccessful = [" + task.isSuccessful() + "]");
+                    .signInWithCredential(credential)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            Log.v(CRDAuthActivity.class.getName(),
+                                  "logInToFirebaseWithGoogleSignIn.onComplete() called with: " + "isSuccessful = ["
+                                      + task.isSuccessful() + "]");
 
-                        // TODO VOLKO MAKE USER DE-WAIT
+                            // TODO VOLKO MAKE USER DE-WAIT
 
-                        // If sign in succeeds the auth state listener will be notified and logic to handle the signed in user can be handled in the listener.
-                        if (!task.isSuccessful()) {
-                            onFirebaseConnectionFailed();
+                            // If sign in succeeds the auth state listener will be notified and logic to handle the
+                            // signed in user can be handled in the listener.
+                            if (!task.isSuccessful()) {
+                                onFirebaseConnectionFailed();
+                            }
                         }
-                    }
-                });
+                    });
     }
 
     /**
@@ -146,7 +153,8 @@ public abstract class CRDAuthActivity extends AppCompatActivity implements Googl
      */
     @Override
     public final void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.v(CRDAuthActivity.class.getName(), "onConnectionFailed() called with: " + "connectionResult = [" + connectionResult.toString() + "]");
+        Log.v(CRDAuthActivity.class.getName(),
+              "onConnectionFailed() called with: " + "connectionResult = [" + connectionResult.toString() + "]");
 
         onGoogleConnectionFailed();
     }
@@ -157,7 +165,8 @@ public abstract class CRDAuthActivity extends AppCompatActivity implements Googl
      * @param user the currently logged-in user
      */
     protected void onFirebaseUserSignedIn(FirebaseUser user) {
-        Log.v(CRDAuthActivity.class.getName(), "onFirebaseUserSignedIn() called, USER IS SIGNED IN ! " + "firebaseAuth = [" + user.getUid() + "]");
+        Log.v(CRDAuthActivity.class.getName(),
+              "onFirebaseUserSignedIn() called, USER IS SIGNED IN ! " + "firebaseAuth = [" + user.getUid() + "]");
     }
 
     /**

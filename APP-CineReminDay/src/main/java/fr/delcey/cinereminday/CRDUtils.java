@@ -11,19 +11,18 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.telephony.SmsManager;
 import android.util.Log;
-
+import fr.delcey.cinereminday.local_code_manager.CRDSharedPreferences;
+import fr.delcey.cinereminday.local_code_manager.CRDSmsReceiver;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.util.Date;
-
-import fr.delcey.cinereminday.local_code_manager.CRDSharedPreferences;
-import fr.delcey.cinereminday.local_code_manager.CRDSmsReceiver;
 
 /**
  * Created by Nino on 09/03/2017.
  */
 
 public class CRDUtils {
+
     private static final DecimalFormat sDecimalFormat = new DecimalFormat("#,###");
 
     public static final int MINUTE = 60;
@@ -34,7 +33,8 @@ public class CRDUtils {
     public static final String ORANGE_CINEDAY_KEYWORD = "ciné";
 
     public static void sendSmsToOrange(Context context) {
-        if (ContextCompat.checkSelfPermission(context.getApplicationContext(), Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(context.getApplicationContext(), Manifest.permission.SEND_SMS)
+            == PackageManager.PERMISSION_GRANTED) {
             Log.v(CRDUtils.class.getName(), "sendSmsToOrange() => Sending SMS !");
 
             toggleSmsReceiver(context.getApplicationContext(), true);
@@ -42,7 +42,11 @@ public class CRDUtils {
             CRDSharedPreferences.getInstance(context).setSendingSmsEpoch();
 
             SmsManager smsManager = SmsManager.getDefault();
-            smsManager.sendTextMessage(CRDUtils.ORANGE_CINEDAY_NUMBER, null, CRDUtils.ORANGE_CINEDAY_KEYWORD, null, null);
+            smsManager.sendTextMessage(CRDUtils.ORANGE_CINEDAY_NUMBER,
+                                       null,
+                                       CRDUtils.ORANGE_CINEDAY_KEYWORD,
+                                       null,
+                                       null);
         } else {
             Log.e(CRDUtils.class.getName(), "sendSmsToOrange() => FAILED TO SEND SMS ! (Missing permission)");
 
@@ -55,20 +59,27 @@ public class CRDUtils {
         PackageManager packageManager = context.getPackageManager();
         ComponentName componentName = new ComponentName(context.getApplicationContext(), CRDSmsReceiver.class);
         if (enable) {
-            packageManager.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+            packageManager.setComponentEnabledSetting(componentName,
+                                                      PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                                                      PackageManager.DONT_KILL_APP);
         } else {
-            packageManager.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+            packageManager.setComponentEnabledSetting(componentName,
+                                                      PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+                                                      PackageManager.DONT_KILL_APP);
         }
     }
 
     public static boolean isSmsPermissionOK(@NonNull Context context) {
-        return ContextCompat.checkSelfPermission(context, Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(context, Manifest.permission.RECEIVE_SMS) == android.content.pm.PackageManager.PERMISSION_GRANTED;
+        return ContextCompat.checkSelfPermission(context, Manifest.permission.SEND_SMS)
+            == PackageManager.PERMISSION_GRANTED
+            && ContextCompat.checkSelfPermission(context, Manifest.permission.RECEIVE_SMS)
+            == android.content.pm.PackageManager.PERMISSION_GRANTED;
     }
 
     public static void redirectToStore(@NonNull Context context) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        String playStoreLink = String.format("market://details?id=%s", context.getApplicationContext().getPackageName());
+        String playStoreLink = String.format("market://details?id=%s",
+                                             context.getApplicationContext().getPackageName());
         intent.setData(Uri.parse(playStoreLink));
         context.startActivity(intent);
     }

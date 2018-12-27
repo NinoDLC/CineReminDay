@@ -8,7 +8,9 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-
+import fr.delcey.cinereminday.BuildConfig;
+import fr.delcey.cinereminday.CRDUtils;
+import fr.delcey.cinereminday.sms_scheduler.CRDAlarmReceiver;
 import org.threeten.bp.DayOfWeek;
 import org.threeten.bp.Duration;
 import org.threeten.bp.Instant;
@@ -17,19 +19,18 @@ import org.threeten.bp.ZoneId;
 import org.threeten.bp.ZonedDateTime;
 import org.threeten.bp.temporal.TemporalAdjusters;
 
-import fr.delcey.cinereminday.BuildConfig;
-import fr.delcey.cinereminday.CRDUtils;
-import fr.delcey.cinereminday.sms_scheduler.CRDAlarmReceiver;
-
 /**
  * Created by Nino on 24/06/2017.
  */
 
 public class CRDTimeManager {
+
     private static long sDeltaEpoch; // Delta of time between the desired epoch and when we set the desired epoch
 
     public static void setEpoch(long desiredEpoch) {
-        Log.v(CRDTimeManager.class.getName(), "setEpoch() called with: " + "desiredEpoch = [" + CRDUtils.makeBigNumberReadable(desiredEpoch) + "], human-readable date = [" + CRDUtils.epochToHumanReadableDate(desiredEpoch) + "]");
+        Log.v(CRDTimeManager.class.getName(),
+              "setEpoch() called with: " + "desiredEpoch = [" + CRDUtils.makeBigNumberReadable(desiredEpoch)
+                  + "], human-readable date = [" + CRDUtils.epochToHumanReadableDate(desiredEpoch) + "]");
 
         long currentEpoch = ZonedDateTime.now(ZoneId.of("Europe/Paris")).toInstant().toEpochMilli();
 
@@ -54,7 +55,10 @@ public class CRDTimeManager {
         Long lastAlarmTriggerEpoch = CRDSharedPreferences.getInstance(context).getLastAlarmTriggeredEpoch();
 
         // Schedule alarm the same day only if it didn't already ring today tuesday
-        scheduleAlarm(context, getNextTuesdayMorningTimestamp(lastAlarmTriggerEpoch == null || !isEpochBetweenTuesdayMorningAndEvening(lastAlarmTriggerEpoch)));
+        scheduleAlarm(context,
+                      getNextTuesdayMorningTimestamp(
+                          lastAlarmTriggerEpoch == null
+                              || !isEpochBetweenTuesdayMorningAndEvening(lastAlarmTriggerEpoch)));
     }
 
     public static void scheduleNextWeekAlarm(@NonNull Context context) {
@@ -66,11 +70,13 @@ public class CRDTimeManager {
 
         if (allowSameDay) {
             // If today is Tuesday (before 08:10), we'll get a timestamp in the future. Great !
-            // If today is Tuesday (after 08:10), we'll get a timestamp in the past, AlarmManager is garanteed to trigger immediatly. Neat.
+            // If today is Tuesday (after 08:10), we'll get a timestamp in the past, AlarmManager is garanteed to
+            // trigger immediatly. Neat.
             // If today is not Tuesday, everything is fine, we get next tuesday epoch
             nextTuesday = getNowTime().with(TemporalAdjusters.nextOrSame(DayOfWeek.TUESDAY));
         } else {
-            // We are tuesday, get next week timestamp with TemporalAdjusters.next instead of TemporalAdjusters.nextOrSame
+            // We are tuesday, get next week timestamp with TemporalAdjusters.next instead of TemporalAdjusters
+            // .nextOrSame
             // If we are not tuesday, it doesn't "loop over" and give a timestamp in > 7 days
             nextTuesday = getNowTime().with(TemporalAdjusters.next(DayOfWeek.TUESDAY));
         }
@@ -83,8 +89,13 @@ public class CRDTimeManager {
     private static void scheduleAlarm(Context context, long epoch) {
         long nowDebug = getNowTime().toInstant().toEpochMilli();
 
-        Log.v(CRDTimeManager.class.getName(), "scheduleAlarm() => Alarm scheduled to happen at epoch = [" + CRDUtils.makeBigNumberReadable(epoch) + "], current epoch is = [" + CRDUtils.makeBigNumberReadable(nowDebug) + "]");
-        Log.v(CRDTimeManager.class.getName(), "scheduleAlarm() => Alarm scheduled in = [" + CRDUtils.secondsToHumanReadableCountDown(context, (int) (epoch - nowDebug) / 1_000) + "], at = [" + CRDUtils.epochToHumanReadableDate(epoch) + "}");
+        Log.v(CRDTimeManager.class.getName(),
+              "scheduleAlarm() => Alarm scheduled to happen at epoch = [" + CRDUtils.makeBigNumberReadable(epoch)
+                  + "], current epoch is = [" + CRDUtils.makeBigNumberReadable(nowDebug) + "]");
+        Log.v(CRDTimeManager.class.getName(),
+              "scheduleAlarm() => Alarm scheduled in = [" +
+                  CRDUtils.secondsToHumanReadableCountDown(context, (int) (epoch - nowDebug) / 1_000)
+                  + "], at = [" + CRDUtils.epochToHumanReadableDate(epoch) + "}");
 
         CRDSharedPreferences.getInstance(context).setNextAlarmEpoch(epoch);
 
@@ -93,7 +104,10 @@ public class CRDTimeManager {
             epoch = epoch - sDeltaEpoch;
         }
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, new Intent(context, CRDAlarmReceiver.class), 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
+                                                                 0,
+                                                                 new Intent(context, CRDAlarmReceiver.class),
+                                                                 0);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -107,8 +121,8 @@ public class CRDTimeManager {
 
     private static long getSameOrPreviousTuesdayEveningTimestamp() {
         ZonedDateTime sameOfPreviousTuesday = getNowTime()
-                .with(TemporalAdjusters.previousOrSame(DayOfWeek.TUESDAY))
-                .with(LocalTime.of(23, 59, 59));
+            .with(TemporalAdjusters.previousOrSame(DayOfWeek.TUESDAY))
+            .with(LocalTime.of(23, 59, 59));
 
         return sameOfPreviousTuesday.toInstant().toEpochMilli();
     }
@@ -121,7 +135,7 @@ public class CRDTimeManager {
         Instant instant = Instant.ofEpochMilli(epoch);
 
         return instant.isAfter(Instant.ofEpochMilli(getNextTuesdayMorningTimestamp(true)))
-                && instant.isBefore(Instant.ofEpochMilli(getSameOrPreviousTuesdayEveningTimestamp()));
+            && instant.isBefore(Instant.ofEpochMilli(getSameOrPreviousTuesdayEveningTimestamp()));
     }
 
     public static boolean isTodayTuesday() {

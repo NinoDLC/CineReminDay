@@ -5,9 +5,11 @@ package fr.delcey.cinereminday.cloud_code_manager.beans;
  */
 
 public class CinedayCode {
+
     private String mCode;
     private boolean mAvailable;
 
+    @SuppressWarnings("unused")
     public CinedayCode() { // Needed for Firebase deserialization
 
     }
@@ -36,8 +38,8 @@ public class CinedayCode {
     @Override
     public String toString() {
         return "CinedayCode{" +
-                "code='" + mCode + '\'' +
-                ", available=" + mAvailable +
-                '}';
+            "code='" + mCode + '\'' +
+            ", available=" + mAvailable +
+            '}';
     }
 }

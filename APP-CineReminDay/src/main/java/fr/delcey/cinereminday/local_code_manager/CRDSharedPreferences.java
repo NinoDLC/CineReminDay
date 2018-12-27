@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.util.ArraySet;
-
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -13,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 
 public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenceChangeListener {
+
     private static final String SHARED_PREF_IDENTIFIER = "prefs";
     private static final String SHARED_PREF_KEY_LAST_TRIGGERED_ALARM_EPOCH = "LAST_TRIGGERED_ALARM_EPOCH";
     private static final String SHARED_PREF_KEY_CINEDAY_TO_SHARE_EPOCH = "CINEDAY_TO_SHARE_EPOCH";
@@ -21,7 +21,8 @@ public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenc
     // Public keys to listen to events on theses
     public static final String IS_USER_OK_WITH_SMS_SENDING = "SMS_OK";
     public static final String SHARED_PREF_KEY_CINEDAY = "CINEDAY";
-    public static final String SHARED_PREF_KEY_CINEDAY_EPOCH = "CINEDAY_EPOCH"; // Only for debug, if we get the same code twice on different days, it won't call onSharedPreferenceChanged because code is the same
+    public static final String SHARED_PREF_KEY_CINEDAY_EPOCH = "CINEDAY_EPOCH"; // Only for debug, if we get the same
+    // code twice on different days, it won't call onSharedPreferenceChanged because code is the same
     public static final String SHARED_PREF_KEY_CINEDAY_TO_SHARE = "CINEDAY_TO_SHARE";
     public static final String SHARED_PREF_KEY_SMS_ERROR = "SMS_ERROR";
     public static final String SHARED_PREF_KEY_SCHEDULED_ALARM_EPOCH = "SCHEDULED_ALARM_EPOCH";
@@ -49,7 +50,8 @@ public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenc
     }
     // endregion
 
-    private final ConcurrentHashMap<OnSharedPreferenceListener, ArraySet<String>> mSharedPreferenceListeners = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<OnSharedPreferenceListener, ArraySet<String>> mSharedPreferenceListeners = new
+        ConcurrentHashMap<>();
 
     private SharedPreferences mSharedPreferences;
 
@@ -62,8 +64,8 @@ public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenc
 
     public void setUserOkWithSmsSending(boolean ok) {
         mSharedPreferences.edit()
-                .putBoolean(IS_USER_OK_WITH_SMS_SENDING, ok)
-                .apply();
+                          .putBoolean(IS_USER_OK_WITH_SMS_SENDING, ok)
+                          .apply();
     }
 
     public boolean isUserOkWithSmsSending() {
@@ -73,14 +75,14 @@ public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenc
     public void setCinedayCode(@Nullable String cinedayCode) {
         if (cinedayCode == null) {
             mSharedPreferences.edit()
-                    .remove(SHARED_PREF_KEY_CINEDAY)
-                    .remove(SHARED_PREF_KEY_CINEDAY_EPOCH)
-                    .apply();
+                              .remove(SHARED_PREF_KEY_CINEDAY)
+                              .remove(SHARED_PREF_KEY_CINEDAY_EPOCH)
+                              .apply();
         } else {
             mSharedPreferences.edit()
-                    .putString(SHARED_PREF_KEY_CINEDAY, cinedayCode)
-                    .putLong(SHARED_PREF_KEY_CINEDAY_EPOCH, CRDTimeManager.getNowTimeMilli())
-                    .apply();
+                              .putString(SHARED_PREF_KEY_CINEDAY, cinedayCode)
+                              .putLong(SHARED_PREF_KEY_CINEDAY_EPOCH, CRDTimeManager.getNowTimeMilli())
+                              .apply();
         }
     }
 
@@ -103,14 +105,14 @@ public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenc
     public void setCinedayCodeToShare(@Nullable String cinedayCodeToShare) {
         if (cinedayCodeToShare == null) {
             mSharedPreferences.edit()
-                    .remove(SHARED_PREF_KEY_CINEDAY_TO_SHARE)
-                    .remove(SHARED_PREF_KEY_CINEDAY_TO_SHARE_EPOCH)
-                    .apply();
+                              .remove(SHARED_PREF_KEY_CINEDAY_TO_SHARE)
+                              .remove(SHARED_PREF_KEY_CINEDAY_TO_SHARE_EPOCH)
+                              .apply();
         } else {
             mSharedPreferences.edit()
-                    .putString(SHARED_PREF_KEY_CINEDAY_TO_SHARE, cinedayCodeToShare)
-                    .putLong(SHARED_PREF_KEY_CINEDAY_TO_SHARE_EPOCH, CRDTimeManager.getNowTimeMilli())
-                    .apply();
+                              .putString(SHARED_PREF_KEY_CINEDAY_TO_SHARE, cinedayCodeToShare)
+                              .putLong(SHARED_PREF_KEY_CINEDAY_TO_SHARE_EPOCH, CRDTimeManager.getNowTimeMilli())
+                              .apply();
         }
     }
 
@@ -132,8 +134,8 @@ public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenc
 
     public void setLastAlarmTriggeredEpoch() {
         mSharedPreferences.edit()
-                .putLong(SHARED_PREF_KEY_LAST_TRIGGERED_ALARM_EPOCH, CRDTimeManager.getNowTimeMilli())
-                .apply();
+                          .putLong(SHARED_PREF_KEY_LAST_TRIGGERED_ALARM_EPOCH, CRDTimeManager.getNowTimeMilli())
+                          .apply();
     }
 
     @Nullable
@@ -149,8 +151,8 @@ public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenc
 
     void setNextAlarmEpoch(long epoch) {
         mSharedPreferences.edit()
-                .putLong(SHARED_PREF_KEY_SCHEDULED_ALARM_EPOCH, epoch)
-                .apply();
+                          .putLong(SHARED_PREF_KEY_SCHEDULED_ALARM_EPOCH, epoch)
+                          .apply();
     }
 
     @Nullable
@@ -166,8 +168,8 @@ public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenc
 
     public void setSendingSmsEpoch() {
         mSharedPreferences.edit()
-                .putLong(SHARED_PREF_KEY_SMS_SEND_EPOCH, CRDTimeManager.getNowTimeMilli())
-                .apply();
+                          .putLong(SHARED_PREF_KEY_SMS_SEND_EPOCH, CRDTimeManager.getNowTimeMilli())
+                          .apply();
     }
 
     @Nullable
@@ -184,14 +186,14 @@ public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenc
     public void setSmsError(@Nullable String message) {
         if (message == null) {
             mSharedPreferences.edit()
-                    .remove(SHARED_PREF_KEY_SMS_ERROR)
-                    .remove(SHARED_PREF_KEY_SMS_ERROR_EPOCH)
-                    .apply();
+                              .remove(SHARED_PREF_KEY_SMS_ERROR)
+                              .remove(SHARED_PREF_KEY_SMS_ERROR_EPOCH)
+                              .apply();
         } else {
             mSharedPreferences.edit()
-                    .putString(SHARED_PREF_KEY_SMS_ERROR, message)
-                    .putLong(SHARED_PREF_KEY_SMS_ERROR_EPOCH, CRDTimeManager.getNowTimeMilli())
-                    .apply();
+                              .putString(SHARED_PREF_KEY_SMS_ERROR, message)
+                              .putLong(SHARED_PREF_KEY_SMS_ERROR_EPOCH, CRDTimeManager.getNowTimeMilli())
+                              .apply();
         }
     }
 
@@ -211,10 +213,11 @@ public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenc
         }
     }
 
-    public void setCancelNextSmsSendingEpoch(long epoch) { // TODO VOLKO ADD BUTTON TO STOP SMS SENDING FOR NEXT WEEK ON STATUS DASHBOARD
+    public void setCancelNextSmsSendingEpoch(long epoch) { // TODO VOLKO ADD BUTTON TO STOP SMS SENDING FOR NEXT WEEK
+        // ON STATUS DASHBOARD
         mSharedPreferences.edit()
-                .putLong(SHARED_PREF_KEY_CANCEL_SMS_SENDING_EPOCH, epoch)
-                .apply();
+                          .putLong(SHARED_PREF_KEY_CANCEL_SMS_SENDING_EPOCH, epoch)
+                          .apply();
     }
 
     @Nullable
@@ -230,8 +233,8 @@ public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenc
 
     public void setCinedayCodeGivenEpoch() {
         mSharedPreferences.edit()
-                .putLong(SHARED_PREF_KEY_CINEDAY_CODE_GIVEN_EPOCH, CRDTimeManager.getNowTimeMilli())
-                .apply();
+                          .putLong(SHARED_PREF_KEY_CINEDAY_CODE_GIVEN_EPOCH, CRDTimeManager.getNowTimeMilli())
+                          .apply();
     }
 
     @Nullable
@@ -245,7 +248,8 @@ public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenc
         }
     }
 
-    public void addOnSharedPreferenceListener(@NonNull OnSharedPreferenceListener listener, @NonNull String... preferenceKeysToListen) {
+    public void addOnSharedPreferenceListener(@NonNull OnSharedPreferenceListener listener,
+                                              @NonNull String... preferenceKeysToListen) {
         ArraySet<String> preferenceKeysListened = mSharedPreferenceListeners.get(listener);
 
         // One listener can listen to multiple keys changes
@@ -284,7 +288,8 @@ public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenc
      * @param listener                      the listener that stops listening these preference keys
      * @param preferenceKeysToStopListening the keys to unregister from the listener
      */
-    public void removeOnSharedPreferenceListener(@NonNull OnSharedPreferenceListener listener, @NonNull String... preferenceKeysToStopListening) {
+    public void removeOnSharedPreferenceListener(@NonNull OnSharedPreferenceListener listener,
+                                                 @NonNull String... preferenceKeysToStopListening) {
         ArraySet<String> preferenceKeysListened = mSharedPreferenceListeners.get(listener);
 
         if (preferenceKeysListened != null) {
@@ -306,7 +311,8 @@ public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenc
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        for (OnSharedPreferenceListener onSharedPreferenceListener : mSharedPreferenceListeners.keySet()) { // Check if every listener...
+        for (OnSharedPreferenceListener onSharedPreferenceListener : mSharedPreferenceListeners.keySet()) { // Check
+            // if every listener...
             ArraySet<String> preferenceKeysListened = mSharedPreferenceListeners.get(onSharedPreferenceListener);
 
             if (preferenceKeysListened != null) {
@@ -322,6 +328,7 @@ public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenc
     }
 
     public interface OnSharedPreferenceListener {
+
         void onSharedPreferenceChanged(@NonNull String key, @Nullable Object value);
     }
 }

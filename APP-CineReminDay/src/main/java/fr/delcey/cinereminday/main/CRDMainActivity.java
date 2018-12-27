@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,10 +21,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.firebase.auth.FirebaseUser;
 import com.wang.avi.AVLoadingIndicatorView;
-
 import fr.delcey.cinereminday.BuildConfig;
 import fr.delcey.cinereminday.CRDAuthActivity;
 import fr.delcey.cinereminday.CRDConstants;
@@ -36,7 +33,8 @@ import fr.delcey.cinereminday.cloud_code_manager.CRDCloudCodeManager;
 import fr.delcey.cinereminday.local_code_manager.CRDSharedPreferences;
 import fr.delcey.cinereminday.local_code_manager.CRDTimeManager;
 
-public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.OnRequestPermissionsResultCallback, CRDSharedPreferences.OnSharedPreferenceListener {
+public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.OnRequestPermissionsResultCallback,
+                                                                CRDSharedPreferences.OnSharedPreferenceListener {
 
     // ProgressBar
     private AVLoadingIndicatorView mCustomProgressBar;
@@ -204,7 +202,9 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
 
             // Human permission to send SMS
             mCardviewSmsSchedulePermission.setVisibility(View.GONE);
-        } else if (!CRDSharedPreferences.getInstance(this).isUserOkWithSmsSending()) { // Then human permission to schedule an SMS (because of Google Play policies)
+        } else if (!CRDSharedPreferences.getInstance(this)
+                                        .isUserOkWithSmsSending()) { // Then human permission to schedule an SMS
+            // (because of Google Play policies)
             // Status
             mImageViewStatus.setImageResource(R.drawable.ic_error_outline_white_36dp);
             mTextViewStatusTitle.setText(R.string.main_dashboard_status_error_review_sms_message);
@@ -223,7 +223,8 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
 
             mImageViewStatus.setImageResource(R.drawable.ic_done_white_36dp);
             mTextViewStatusTitle.setText(R.string.main_dashboard_status_scheduled);
-            mTextViewStatusMessage.setText(getString(R.string.main_dashboard_status_scheduled_message, howMuchTimeUntilSmsSending));
+            mTextViewStatusMessage.setText(getString(R.string.main_dashboard_status_scheduled_message,
+                                                     howMuchTimeUntilSmsSending));
 
             // Permission
             mCardviewSmsPermission.setVisibility(View.GONE);
@@ -275,7 +276,8 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
         }
 
         // Telephone carrier
-        TelephonyManager telephonyManager = (TelephonyManager) getBaseContext().getSystemService(Context.TELEPHONY_SERVICE);
+        TelephonyManager telephonyManager = (TelephonyManager) getBaseContext().getSystemService(Context
+                                                                                                     .TELEPHONY_SERVICE);
         String simOperatorName = telephonyManager.getSimOperatorName();
 
         if (getString(R.string.authorized_sim_operator).equalsIgnoreCase(simOperatorName)) {
@@ -285,7 +287,7 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
         }
 
         if (CRDTimeManager.isTodayTuesday()
-                && !CRDTimeManager.isCinedayCodeValid(this)) {
+            && !CRDTimeManager.isCinedayCodeValid(this)) {
             mCardviewAskCinedayCode.setVisibility(View.VISIBLE);
         } else {
             mCardviewAskCinedayCode.setVisibility(View.GONE);
@@ -303,7 +305,9 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
     }
 
     private void onAskSmsPermissionButtonClicked() {
-        ActivityCompat.requestPermissions(CRDMainActivity.this, new String[]{Manifest.permission.SEND_SMS, Manifest.permission.RECEIVE_SMS}, CRDConstants.REQUEST_CODE_SMS_PERMISSIONS);
+        ActivityCompat.requestPermissions(CRDMainActivity.this,
+                                          new String[]{Manifest.permission.SEND_SMS, Manifest.permission.RECEIVE_SMS},
+                                          CRDConstants.REQUEST_CODE_SMS_PERMISSIONS);
     }
 
     private void onScheduleSmsButtonClicked() {
@@ -328,7 +332,9 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
 
     private void onShareCinedayCodeFriendButtonClicked() {
         Intent intent = new Intent(Intent.ACTION_SEND);
-        intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.sms_default_message, CRDSharedPreferences.getInstance(this).getCinedayCode()));
+        intent.putExtra(Intent.EXTRA_TEXT,
+                        getString(R.string.sms_default_message,
+                                  CRDSharedPreferences.getInstance(this).getCinedayCode()));
         intent.setType("text/plain");
         startActivity(Intent.createChooser(intent, getString(R.string.main_dashboard_share_cineday_code)));
     }
@@ -366,16 +372,23 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
         super.onResume();
 
         CRDSharedPreferences.getInstance(this).addOnSharedPreferenceListener(this,
-                CRDSharedPreferences.IS_USER_OK_WITH_SMS_SENDING,
-                CRDSharedPreferences.SHARED_PREF_KEY_CINEDAY,
-                CRDSharedPreferences.SHARED_PREF_KEY_CINEDAY_EPOCH,
-                CRDSharedPreferences.SHARED_PREF_KEY_SCHEDULED_ALARM_EPOCH,
-                CRDSharedPreferences.SHARED_PREF_KEY_SMS_SEND_EPOCH,
-                CRDSharedPreferences.SHARED_PREF_KEY_SMS_ERROR,
-                CRDSharedPreferences.SHARED_PREF_KEY_CINEDAY_CODE_GIVEN_EPOCH);
+                                                                             CRDSharedPreferences
+                                                                                 .IS_USER_OK_WITH_SMS_SENDING,
+                                                                             CRDSharedPreferences
+                                                                                 .SHARED_PREF_KEY_CINEDAY,
+                                                                             CRDSharedPreferences
+                                                                                 .SHARED_PREF_KEY_CINEDAY_EPOCH,
+                                                                             CRDSharedPreferences
+                                                                                 .SHARED_PREF_KEY_SCHEDULED_ALARM_EPOCH,
+                                                                             CRDSharedPreferences
+                                                                                 .SHARED_PREF_KEY_SMS_SEND_EPOCH,
+                                                                             CRDSharedPreferences
+                                                                                 .SHARED_PREF_KEY_SMS_ERROR,
+                                                                             CRDSharedPreferences
+                                                                                 .SHARED_PREF_KEY_CINEDAY_CODE_GIVEN_EPOCH);
 
         if (CRDUtils.isSmsPermissionOK(this)
-                && CRDSharedPreferences.getInstance(this).isUserOkWithSmsSending()) {
+            && CRDSharedPreferences.getInstance(this).isUserOkWithSmsSending()) {
             CRDTimeManager.scheduleWeeklyAlarm(this);
         }
 
@@ -402,7 +415,9 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
      * We have new informations about the Permissions we asked !
      */
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (requestCode == CRDConstants.REQUEST_CODE_SMS_PERMISSIONS) {
@@ -410,7 +425,9 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
                 if (Manifest.permission.SEND_SMS.equalsIgnoreCase(permissions[i])) {
                     if (PackageManager.PERMISSION_GRANTED != grantResults[i]) {
                         // TODO VOLKO Talk better / nicer / prettier to user !
-                        Toast.makeText(CRDMainActivity.this, "I can't send SMS, I won't work correctly !", Toast.LENGTH_LONG).show();
+                        Toast.makeText(CRDMainActivity.this,
+                                       "I can't send SMS, I won't work correctly !",
+                                       Toast.LENGTH_LONG).show();
                     }
 
                     break;
@@ -435,7 +452,8 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
 
             @Override
             public void onCodeSharingFailed(String error) {
-                Log.e(CRDMainActivity.class.getName(), "shareCinedayCode.onCodeSharingFailed() called with: " + "error = [" + error + "]");
+                Log.e(CRDMainActivity.class.getName(),
+                      "shareCinedayCode.onCodeSharingFailed() called with: " + "error = [" + error + "]");
 
                 Toast.makeText(CRDMainActivity.this, error, Toast.LENGTH_LONG).show();
 

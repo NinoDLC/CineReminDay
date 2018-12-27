@@ -5,17 +5,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.provider.Telephony;
 import android.telephony.SmsMessage;
-
+import fr.delcey.cinereminday.CRDUtils;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import fr.delcey.cinereminday.CRDUtils;
 
 /**
  * Created by Nino on 10/03/2017.
  */
 
 public class CRDSmsReceiver extends BroadcastReceiver {
+
     public static final Pattern CINEDAY_CODE_PATTERN = Pattern.compile("\\d{4} \\d{4}");
 
     @Override
