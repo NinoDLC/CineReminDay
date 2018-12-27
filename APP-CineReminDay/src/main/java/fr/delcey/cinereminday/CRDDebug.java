@@ -1,6 +1,6 @@
 package fr.delcey.cinereminday;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 import com.hulab.debugkit.DebugFunction;
 import com.hulab.debugkit.DevTool;
 import fr.delcey.cinereminday.local_code_manager.CRDSharedPreferences;
