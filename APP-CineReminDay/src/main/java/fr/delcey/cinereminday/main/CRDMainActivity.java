@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.AnimatedVectorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,7 +23,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.firebase.auth.FirebaseUser;
-import com.wang.avi.AVLoadingIndicatorView;
 import fr.delcey.cinereminday.BuildConfig;
 import fr.delcey.cinereminday.CRDAuthActivity;
 import fr.delcey.cinereminday.CRDConstants;
@@ -37,7 +37,7 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
                                                                 CRDSharedPreferences.OnSharedPreferenceListener {
 
     // ProgressBar
-    private AVLoadingIndicatorView mCustomProgressBar;
+    private ImageView mAnimatedProgressBar;
     private View mCustomProgressBarBackground;
 
     // Status
@@ -82,8 +82,11 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
         setContentView(R.layout.main_activity);
 
         // ProgressBar
-        mCustomProgressBar = (AVLoadingIndicatorView) findViewById(R.id.main_pb);
+        mAnimatedProgressBar = findViewById(R.id.main_pb);
         mCustomProgressBarBackground = findViewById(R.id.main_pb_background);
+
+        AnimatedVectorDrawable animatedVectorDrawable = (AnimatedVectorDrawable) mAnimatedProgressBar.getDrawable();
+        animatedVectorDrawable.start();
 
         // Status
         mButtonStatusRetry = (Button) findViewById(R.id.main_dashboard_item_status_btn_retry);
@@ -440,13 +443,13 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
     }
 
     private void shareCinedayCode(String cinedayCodeToShare) {
-        mCustomProgressBar.setVisibility(View.VISIBLE);
+        mAnimatedProgressBar.setVisibility(View.VISIBLE);
         mCustomProgressBarBackground.setVisibility(View.VISIBLE);
 
         mCinedayCodeManager.shareCinedayCode(this, cinedayCodeToShare, new CRDCloudCodeManager.OnCodeSharedCallback() {
             @Override
             public void onCodeShared() {
-                mCustomProgressBar.setVisibility(View.GONE);
+                mAnimatedProgressBar.setVisibility(View.GONE);
                 mCustomProgressBarBackground.setVisibility(View.GONE);
             }
 
@@ -457,20 +460,20 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
 
                 Toast.makeText(CRDMainActivity.this, error, Toast.LENGTH_LONG).show();
 
-                mCustomProgressBar.setVisibility(View.GONE);
+                mAnimatedProgressBar.setVisibility(View.GONE);
                 mCustomProgressBarBackground.setVisibility(View.GONE);
             }
         });
     }
 
     private void getCinedayCode() {
-        mCustomProgressBar.setVisibility(View.VISIBLE);
+        mAnimatedProgressBar.setVisibility(View.VISIBLE);
         mCustomProgressBarBackground.setVisibility(View.VISIBLE);
 
         mCinedayCodeManager.queryCinedayCode(this, new CRDCloudCodeManager.OnCodeQueriedCallback() {
             @Override
             public void onCodeQueried() {
-                mCustomProgressBar.setVisibility(View.GONE);
+                mAnimatedProgressBar.setVisibility(View.GONE);
                 mCustomProgressBarBackground.setVisibility(View.GONE);
             }
 
@@ -478,7 +481,7 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
             public void onCodeQueryingResultEmpty() {
                 Toast.makeText(CRDMainActivity.this, R.string.no_available_cineday_code, Toast.LENGTH_LONG).show();
 
-                mCustomProgressBar.setVisibility(View.GONE);
+                mAnimatedProgressBar.setVisibility(View.GONE);
                 mCustomProgressBarBackground.setVisibility(View.GONE);
             }
 
@@ -486,7 +489,7 @@ public class CRDMainActivity extends CRDAuthActivity implements ActivityCompat.O
             public void onCodeQueryingFailed(String error) {
                 Toast.makeText(CRDMainActivity.this, error, Toast.LENGTH_LONG).show();
 
-                mCustomProgressBar.setVisibility(View.GONE);
+                mAnimatedProgressBar.setVisibility(View.GONE);
                 mCustomProgressBarBackground.setVisibility(View.GONE);
             }
         });

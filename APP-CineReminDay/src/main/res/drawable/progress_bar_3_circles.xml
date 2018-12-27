@@ -1,0 +1,108 @@
+<animated-vector
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    >
+    <aapt:attr name="android:drawable">
+        <vector
+            android:height="128dp"
+            android:name="vector"
+            android:viewportHeight="64"
+            android:viewportWidth="64"
+            android:width="128dp"
+            >
+            <group android:name="group_right_circle">
+                <path
+                    android:fillAlpha="0"
+                    android:name="right_circle"
+                    android:pathData="M 51.5 42 C 51.5 44.76 49.26 47 46.5 47 C 43.74 47 41.5 44.76 41.5 42 C 41.5 39.24 43.74 37 46.5 37 C 49.26 37 51.5 39.24 51.5 42 Z"
+                    android:strokeColor="#FF9800"
+                    android:strokeWidth="1"
+                    />
+            </group>
+            <group android:name="group_left_circle">
+                <path
+                    android:fillAlpha="0"
+                    android:name="left_circle"
+                    android:pathData="M 22.5 42 C 22.5 44.76 20.26 47 17.5 47 C 14.74 47 12.5 44.76 12.5 42 C 12.5 39.24 14.74 37 17.5 37 C 20.26 37 22.5 39.24 22.5 42 Z"
+                    android:strokeColor="#FF9800"
+                    android:strokeWidth="1"
+                    />
+            </group>
+            <group android:name="group_top_circle">
+                <path
+                    android:fillAlpha="0"
+                    android:name="top_circle"
+                    android:pathData="M 37 17.5 C 37 20.26 34.76 22.5 32 22.5 C 29.24 22.5 27 20.26 27 17.5 C 27 14.74 29.24 12.5 32 12.5 C 34.76 12.5 37 14.74 37 17.5 Z"
+                    android:strokeColor="#FF9800"
+                    android:strokeWidth="1"
+                    />
+            </group>
+        </vector>
+    </aapt:attr>
+    <target android:name="group_right_circle">
+        <aapt:attr name="android:animation">
+            <objectAnimator
+                android:duration="600"
+                android:interpolator="@android:anim/linear_interpolator"
+                android:propertyName="translateX"
+                android:repeatCount="infinite"
+                android:repeatMode="restart"
+                android:valueFrom="0"
+                android:valueTo="-29"
+                android:valueType="floatType"
+                />
+        </aapt:attr>
+    </target>
+    <target android:name="group_left_circle">
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator
+                    android:duration="600"
+                    android:interpolator="@android:anim/linear_interpolator"
+                    android:propertyName="translateX"
+                    android:repeatCount="infinite"
+                    android:repeatMode="restart"
+                    android:valueFrom="0"
+                    android:valueTo="14.5"
+                    android:valueType="floatType"
+                    />
+                <objectAnimator
+                    android:duration="600"
+                    android:interpolator="@android:anim/linear_interpolator"
+                    android:propertyName="translateY"
+                    android:repeatCount="infinite"
+                    android:repeatMode="restart"
+                    android:valueFrom="0"
+                    android:valueTo="-24.5"
+                    android:valueType="floatType"
+                    />
+            </set>
+        </aapt:attr>
+    </target>
+    <target android:name="group_top_circle">
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator
+                    android:duration="600"
+                    android:interpolator="@android:anim/linear_interpolator"
+                    android:propertyName="translateX"
+                    android:repeatCount="infinite"
+                    android:repeatMode="restart"
+                    android:valueFrom="0"
+                    android:valueTo="14.5"
+                    android:valueType="floatType"
+                    />
+                <objectAnimator
+                    android:duration="600"
+                    android:interpolator="@android:anim/linear_interpolator"
+                    android:propertyName="translateY"
+                    android:repeatCount="infinite"
+                    android:repeatMode="restart"
+                    android:valueFrom="0"
+                    android:valueTo="24.5"
+                    android:valueType="floatType"
+                    />
+            </set>
+        </aapt:attr>
+    </target>
+</animated-vector>
