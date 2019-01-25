@@ -10,7 +10,9 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by Nino on 16/03/2017.
  */
-
+// TODO VOLKO REWORK ALL OF THIS. WE CAN DO MUCH BETTER
+// TODO VOLKO REWORK ALL OF THIS. WE CAN DO MUCH BETTER
+// TODO VOLKO REWORK ALL OF THIS. WE CAN DO MUCH BETTER
 public class CRDSharedPreferences implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String SHARED_PREF_IDENTIFIER = "prefs";

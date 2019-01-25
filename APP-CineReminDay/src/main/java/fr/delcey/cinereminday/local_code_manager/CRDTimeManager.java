@@ -52,8 +52,6 @@ public class CRDTimeManager {
 
     // Wakes up the app at 8:10 AM on Tuesdays
     public static void scheduleWeeklyAlarm(@NonNull Context context) {
-        Long lastAlarmTriggerEpoch = CRDSharedPreferences.getInstance(context).getLastAlarmTriggeredEpoch();
-
         // Schedule alarm the same day only if it didn't already ring today tuesday
         scheduleAlarm(context,
                       getNextTuesdayMorningTimestamp(
@@ -113,9 +111,9 @@ public class CRDTimeManager {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, epoch, pendingIntent);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, epoch, pendingIntent);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, epoch, pendingIntent);
         } else {
-            alarmManager.set(AlarmManager.RTC_WAKEUP, epoch, pendingIntent);
+            alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, epoch, pendingIntent);
         }
     }
 

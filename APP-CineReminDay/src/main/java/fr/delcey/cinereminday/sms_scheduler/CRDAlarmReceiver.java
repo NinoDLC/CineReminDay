@@ -16,7 +16,7 @@ import fr.delcey.cinereminday.local_code_manager.CRDTimeManager;
 /**
  * Created by Nino on 10/03/2017.
  */
-
+// TODO VOLKO UTILISER UN LOCALBROADCASTMANAGER INSTEAD ?
 public class CRDAlarmReceiver extends BroadcastReceiver {
 
     @Override
@@ -81,6 +81,8 @@ public class CRDAlarmReceiver extends BroadcastReceiver {
                     CRDUtils.sendSmsToOrange(context);
 
                     telephonyManager.listen(this, PhoneStateListener.LISTEN_NONE);
+                } else {
+                 // TODO VOLKO UTILISER WAITING_FOR_CELLULAR_NETWORK
                 }
             }
         };
