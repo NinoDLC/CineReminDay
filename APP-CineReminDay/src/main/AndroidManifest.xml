@@ -17,40 +17,11 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning"
         >
-        <activity android:name=".main.CRDMainActivity">
+        <activity android:name=".main.RemindayMainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
-        <receiver
-            android:name=".local_code_manager.CRDSmsReceiver"
-            android:permission="android.permission.BROADCAST_SMS"
-            >
-            <intent-filter>
-                <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
-            </intent-filter>
-        </receiver>
-
-        <receiver
-            android:name=".sms_scheduler.CRDAlarmReceiver"/>
-
-        <receiver
-            android:name=".sms_scheduler.CRDTimeChangedReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.DATE_CHANGED"/>
-                <action android:name="android.intent.action.TIME_SET"/>
-                <action android:name="android.intent.action.TIMEZONE_CHANGED"/>
-            </intent-filter>
-        </receiver>
-
-
-        <receiver
-            android:name=".sms_scheduler.CRDBootReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-            </intent-filter>
-        </receiver>
     </application>
 </manifest>
